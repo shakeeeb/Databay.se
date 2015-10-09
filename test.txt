@@ -1,8 +1,6 @@
-<<<<<<< HEAD
+
 Hello Foo!
-=======
+
 Hello World
 
 Yes, this is world. how do you do?
-
->>>>>>> 450185707dcb44e83449c96c838b31cd1036ee5d
