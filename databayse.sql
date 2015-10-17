@@ -3,148 +3,106 @@ create database DATABAYSE;
 use DATABAYSE;
 
 /*******************************************************************************
-Customer: represents customer who buys or sells an item
+Item: represents an item to be sold in an online action
+******************************************************************************/
+CREATE TABLE Item (
+  ItemID INTEGER AUTO_INCREMENT,
+  Name CHAR(20) NOT NULL,
+  Type CHAR(12),
+  Year INTEGER,
+  CopiesSold INTEGER,
+  AmountInStock INTEGER,
+  PRIMARY KEY(ItemID));
+
+/*******************************************************************************
+Customer: represents a customer who buys or sells an item
 *******************************************************************************/
 CREATE TABLE Customer (
+  CustomerID CHAR(32),
   FirstName CHAR(32) NOT NULL,
   LastName CHAR(32) NOT NULL,
-  Address CHAR(128),
-  City CHAR(32),
-  Zipcode INTEGER,
-  Telephone CHAR(20),
-  CreditCard INTEGER NOT NULL,
-  Email CHAR(128),
-  ItemsSold INTEGER,
-  ItemsPurchased INTEGER,
-  Rating INTEGER,
-  CustomerID CHAR(24),
-  PRIMARY KEY(CustomerID)
-  /*FOREIGN KEY(CustomerID) REFERENCES Auction(buyerID)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  FOREIGN KEY(CustomerID) REFERENCES Auction(sellerID)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION*/
-
-/* Rating cannot be negative */
-/*
-CREATE ASSERTION PositiveRating
-   CHECK(NOT EXISTS(SELECT * FROM Customer WHERE Rating < 0))
-
-/* Item sold and items bought cannot be negative */
-/*CREATE ASSERTION PositiveItemsBought
-  CHECK(NOT EXISTS(SELECT * FROM ItemsPurchased WHERE Rating < 0))
-
-CREATE ASSERTION PositiveItemsSold
-  CHECK(NOT EXISTS(SELECT * FROM ItemsSold WHERE Rating<0))*/
-
-)
-
-
-/******************************************************************************
-/* Rating is a domain
-*****************************************************************************
-CREATE DOMAIN RATINGS INTEGER()
-  CHECK(VALUE IN(1, 2, 3, 4, 5))*/
-
+  Address CHAR(128) NOT NULL,
+  City CHAR(32) NOT NULL,
+  State CHAR(2) NOT NULL,
+  Zipcode INTEGER NOT NULL,
+  Telephone CHAR(20) NOT NULL,
+  CreditCard CHAR(20) NOT NULL,
+  Email CHAR(128) NOT NULL,
+  ItemsSold INTEGER DEFAULT 0,
+  ItemsPurchased INTEGER DEFAULT 0,
+  Rating INTEGER DEFAULT 1,
+  PRIMARY KEY(CustomerID));
 
 /*******************************************************************************
 Employee: represents employee overseeing transaction
 *******************************************************************************/
-CREATE TABLE Employee(
-SSID INTEGER,
-FirstName CHAR(64) NOT NULL,
-LastName CHAR(64) NOT NULL,
-Address CHAR(128),
-City CHAR(64),
-ZipCode INTEGER,
-Telephone CHAR(20),
-StartDate INTEGER,
-HourlyRate FLOAT NOT NULL,
-EmployeeID INTEGER,
-PRIMARY KEY(EmployeeID)
-)
-/*they can’t be payed negative numbers*/
-/*CREATE ASSERTION PositivePay
-	CHECK(NOT EXISTS(SELECT * FROM Employee WHERE HourlyRate > 0))
-)*/
+CREATE TABLE Employee (
+  EmployeeID INTEGER AUTO_INCREMENT,
+  SSID INTEGER,
+  FirstName CHAR(32) NOT NULL,
+  LastName CHAR(32) NOT NULL,
+  Address CHAR(128) NOT NULL,
+  City CHAR(32) NOT NULL,
+  State CHAR(2) NOT NULL,
+  ZipCode INTEGER NOT NULL,
+  Telephone CHAR(20),
+  StartDate DATE,
+  HourlyRate FLOAT NOT NULL,
+  PRIMARY KEY(EmployeeID));
 
-
-/*******************************************************************************
-Item: represents an item to be sold in an online action
-*******************************************************************************/
-/*
-CREATE TABLE Item (
-  Id INT(10),
-  Name CHAR(20) NOT NULL,
-  Type TYPES,
-  Year INTEGER,
-  CopiesSold INTEGER,
-  AmountInStock INTEGER,
-  PRIMARY KEY(Id))
-
-# there can't be more items sold than available
-/*CREATE ASSERTION PositiveStock
-  CHECK(NOT EXISTS(SELECT * FROM Item WHERE AmountInStock < 0))
-*/
 /*******************************************************************************
 Auction: represents an online auction
 *******************************************************************************/
-/*CREATE TABLE Auction (
-  Id INTEGER,
-  ItemId INTEGER,
-  SellerId INTEGER,
-  BuyerId, INTEGER,
-  OpeningBid FLOAT,
-  ClosingBid FLOAT,
-  CurrentBid FLOAT,
-  CurrentHighBid FLOAT,
-  OpeningDate INTEGER,
-  OpeningTime INTEGER,
-  ClosingDate INTEGER,
-  ClosingTime INTEGER,
-  Reserve FLOAT, # The lowest amount a seller will accept for an item
-  Increment FLOAT, # The lowest amount a bid can increase from one bid
-  EmployeeId INTEGER,
-  PRIMARY KEY(Id),
-  FOREIGN KEY(ItemId) REFERENCES Item(Id)
+CREATE TABLE Auction (
+  AuctionID INTEGER AUTO_INCREMENT,
+  ItemID INTEGER,
+  SellerID CHAR(32),
+  BuyerID CHAR(32),
+  EmployeeID INTEGER,
+  OpeningBid DECIMAL(8,2),
+  ClosingBid DECIMAL(8,2),
+  CurrentBid DECIMAL(8,2),
+  CurrentHighBid DECIMAL(8,2),
+  OpeningDate DATE,
+  OpeningTime TIME,
+  ClosingDate DATE,
+  ClosingTime TIME,
+  Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
+  Increment DECIMAL(8,2), # The lowest amount a bid can increase
+  PRIMARY KEY(AuctionID),
+  FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  FOREIGN KEY(BuyerId) REFERENCES Customer(Id)
+  FOREIGN KEY(BuyerID) REFERENCES Customer(CustomerID)
     ON DELETE NO ACTION
-
-  FOREIGN KEY(SellerId) REFERENCES Customer(Id)
+    ON UPDATE CASCADE,
+  FOREIGN KEY(SellerID) REFERENCES Customer(CustomerID)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION, # only one seller
-  FOREIGN KEY(EmployeeId) REFERENCES Employee(Id))
-    ON DELETE NO ACTION)
+  FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
+  ON DELETE NO ACTION);
 
-# an auction can't begin before it ends
-/*CREATE ASSERTION BeginsBeforeEnding
-  CHECK(NOT EXISTS(SELECT * FROM Auction WHERE OpeningDate > ClosingDate))*/
-
-# auction transactions can't be negative
-# note: can be replaced by declaring each variable with 'NON NEGATIVE' but didn’t see in textbook
-/*CREATE ASSERTION NoNegativeBids
-  CHECK(NOT EXISTS(SELECT * FROM Auction WHERE OpeningBid < 0
-    AND ClosingBid < 0 AND CurrentBid < 0 AND CurrentHighBid < 0
-    AND Reserve < 0, AND INCREMENT < 0))*/
-
-/*YOU CAN’T AUCTION SOMETHING TO YOURSELF*/
-/*CREATE ASSERTION BuyerIsNotSeller
-	CHECK(NOT EXISTS(SELECT * FROM Auction WHERE BuyerId = SellerId))*/
-
-/* BID CANNOT BE LOWER THAN THE CURRENT BID */
-/*
-CREATE TRIGGER NoLowerBids BEFORE UPDATE ON Auction
-FOR EACH ROW
+DELIMITER $$
+/*******************************************************************************
+ADDS A NEW CUSTOMER TO THE CUSTOMER TABLE
+# TODO: because customerID is based on the users first name if two users have
+the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
+*******************************************************************************/
+CREATE PROCEDURE addCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
+IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
+INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20))
 BEGIN
-		IF NEW.CurrentBid > CurrentBid THEN
-			SET CurrentBid = NEW.CurrentBid;
-		END IF;
-END;*/
+insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
+  State, ZipCode, Telephone, Email, CreditCard)
+  values(Lower(cust_fn), cust_fn, cust_ln, cust_addr, cust_city , cust_state, cust_zip,
+    cust_tel, cust_email, cust_cc);
+End
+$$
+DELIMITER ;
 
 /*******************************************************************************
+TODO: figure out a way to make domains since they don't exist in mysql, also a
+way to define constants like name CHAR(20) might be useful
 TYPES: represents the different categories of an item
 ******************************************************************************
 CREATE DOMAIN TYPES CHAR(10)
