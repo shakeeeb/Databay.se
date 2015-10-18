@@ -1,3 +1,8 @@
+/*******************************************************************************
+* CSE 305: Fall 2015 Online Auction Project
+* Team: Databay.se
+* Members: Miuki Yip, Terrell Mack, Shakeeb Saleh
+*******************************************************************************/
 drop database if exists DATABAYSE;
 create database DATABAYSE;
 use DATABAYSE;
@@ -85,7 +90,7 @@ CREATE TABLE Auction (
 DELIMITER $$
 /*******************************************************************************
 ADDS A NEW CUSTOMER TO THE CUSTOMER TABLE
-# TODO: because customerID is based on the users first name if two users have
+TODO: because customerID is based on the users first name if two users have
 the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
 *******************************************************************************/
 CREATE PROCEDURE addCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
