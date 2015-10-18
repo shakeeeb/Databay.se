@@ -1,6 +1,0 @@
-
-Hello Foo!
-
-Hello World
-
-Yes, this is world. how do you do?
