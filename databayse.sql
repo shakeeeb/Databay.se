@@ -103,6 +103,27 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
     cust_tel, cust_email, cust_cc);
 End
 $$
+
+CREATE PROCEDURE addItem(IN itemID INTEGER, IN itemName CHAR(20),
+IN itemType CHAR(12), IN itemYear INTEGER, IN itemCopiesSold INTEGER, IN itemAmountInStock
+INTEGER)
+BEGIN
+insert into DATABAYSE.Item(ItemID, Name, Type, Year, CopiesSold, AmountInStock)
+  values(itemID, itemName, itemType, itemYear, itemCopiesSold, itemAmountInStock);
+End
+$$
+
+
+CREATE PROCEDURE testSelect()
+BEGIN
+SELECT *
+FROM Customer;
+End
+$$
+
+
+
+
 DELIMITER ;
 
 /*******************************************************************************
