@@ -115,7 +115,7 @@ insert into DATABAYSE.Employee(CustomerID, FirstName, LastName, Address, City,
 End
 $$
 
-=======
+
 CREATE PROCEDURE addItem(IN itemID INTEGER, IN itemName CHAR(20),
 IN itemType CHAR(12), IN itemYear INTEGER, IN itemCopiesSold INTEGER, IN itemAmountInStock
 INTEGER)
@@ -134,9 +134,6 @@ End
 $$
 
 
-
-
->>>>>>> 25c8558a2f2f262ab973bdf0f159449965f44033
 DELIMITER ;
 
 
