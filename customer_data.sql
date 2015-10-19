@@ -18,4 +18,3 @@ call addCustomer('John','Smith', '789 Peace Blvd', 'Los Angeles', 'CA',
 
 call addCustomer('Phil','Lewis', '135 Knowledge Lane', 'Stony Brook', 'NY',
 11790, '(516)666-8888', 'pml@cs.sunysb.edu','6789-2345-6789-2345');
-

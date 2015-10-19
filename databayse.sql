@@ -104,28 +104,19 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
 End
 $$
 
-FirstName CHAR(32) NOT NULL,
-LastName CHAR(32) NOT NULL,
-Address CHAR(128) NOT NULL,
-City CHAR(32) NOT NULL,
-State CHAR(2) NOT NULL,
-ZipCode INTEGER NOT NULL,
-Telephone CHAR(20),
-StartDate DATE,
-HourlyRate FLOAT NOT NULL,
-
-CREATE PROCEDURE addEmployee(IN empl_fn CHAR(32), IN cust_ln CHAR(32),
-IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
-INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20))
+CREATE PROCEDURE addEmployee(IN empl_fn CHAR(32), IN empl_ln CHAR(32),
+IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
+INTEGER, IN empl_tel CHAR(20))
 BEGIN
 insert into DATABAYSE.Employee(CustomerID, FirstName, LastName, Address, City,
-  State, ZipCode, Telephone, Email, CreditCard)
-  values(Lower(cust_fn), cust_fn, cust_ln, cust_addr, cust_city , cust_state, cust_zip,
-    cust_tel, cust_email, cust_cc);
-
+  State, ZipCode, Telephone)
+  values(Lower(empl_fn), empl_fn, empl_ln, empl_addr, empl_city , empl_state, empl_zip,
+    empl_tel);
+End
 $$
 
 DELIMITER ;
+
 
 /*******************************************************************************
 TODO: figure out a way to make domains since they don't exist in mysql, also a
