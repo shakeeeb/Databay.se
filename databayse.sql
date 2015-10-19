@@ -104,7 +104,6 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
 End
 $$
 
-<<<<<<< HEAD
 CREATE PROCEDURE addEmployee(IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
 INTEGER, IN empl_tel CHAR(20))
