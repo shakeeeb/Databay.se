@@ -1,7 +1,7 @@
 /*******************************************************************************
 * CSE 305: Fall 2015 Online Auction Project
 * Team: Databay.se
-* Members: Miuki Yip, Terrell Mack, Shakeeb Saleh
+* Members: Miu ki Yip, Terrell Mack, Shakeeb Saleh
 *******************************************************************************/
 drop database if exists DATABAYSE;
 create database DATABAYSE;
