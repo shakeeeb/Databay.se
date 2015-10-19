@@ -116,12 +116,10 @@ End
 $$
 
 
-CREATE PROCEDURE addItem(IN itemID INTEGER, IN itemName CHAR(20),
-IN itemType CHAR(12), IN itemYear INTEGER, IN itemCopiesSold INTEGER, IN itemAmountInStock
-INTEGER)
+CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
 BEGIN
-insert into DATABAYSE.Item(ItemID, Name, Type, Year, CopiesSold, AmountInStock)
-  values(itemID, itemName, itemType, itemYear, itemCopiesSold, itemAmountInStock);
+insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
+  values(itemName, itemType, itemYear, itemAmountInStock);
 End
 $$
 
