@@ -104,6 +104,7 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
 End
 $$
 
+<<<<<<< HEAD
 CREATE PROCEDURE addEmployee(IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
 INTEGER, IN empl_tel CHAR(20))
@@ -115,6 +116,28 @@ insert into DATABAYSE.Employee(CustomerID, FirstName, LastName, Address, City,
 End
 $$
 
+=======
+CREATE PROCEDURE addItem(IN itemID INTEGER, IN itemName CHAR(20),
+IN itemType CHAR(12), IN itemYear INTEGER, IN itemCopiesSold INTEGER, IN itemAmountInStock
+INTEGER)
+BEGIN
+insert into DATABAYSE.Item(ItemID, Name, Type, Year, CopiesSold, AmountInStock)
+  values(itemID, itemName, itemType, itemYear, itemCopiesSold, itemAmountInStock);
+End
+$$
+
+
+CREATE PROCEDURE testSelect()
+BEGIN
+SELECT *
+FROM Customer;
+End
+$$
+
+
+
+
+>>>>>>> 25c8558a2f2f262ab973bdf0f159449965f44033
 DELIMITER ;
 
 
