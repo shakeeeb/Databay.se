@@ -103,6 +103,15 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
     cust_tel, cust_email, cust_cc);
 End
 $$
+
+
+CREATE PROCEDURE testSelect()
+BEGIN
+SELECT *
+FROM Customer;
+End
+$$
+
 DELIMITER ;
 
 /*******************************************************************************
