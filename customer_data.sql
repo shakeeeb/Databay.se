@@ -11,3 +11,12 @@ call addCustomer('Shiyong','Lu', '123 Success Street', 'Stony Brook', 'NY',
 11790, '(516)632-8959', 'shiyong@cs.sunysb.edu','1234-5678-1234-5678');
 
 call addAuction('Shiyong', 0, 0, 0, 50.0, 55.0); # an auciotn needs a seller id, itemid employee id, opening bid, and a reserve
+
+call addCustomer('Haixia','Du', '456 Fortune Road', 'Stony Brook', 'NY',
+11790, '(516)632-4360', 'dhaixia@cs.sunysb.edu','5678-1234-5678-1234');
+
+call addCustomer('John','Smith', '789 Peace Blvd', 'Los Angeles', 'CA',
+12345, '(412)443-4321', 'shlu@ic.sunysb.edu','2345-6789-2345-6789');
+
+call addCustomer('Phil','Lewis', '135 Knowledge Lane', 'Stony Brook', 'NY',
+11790, '(516)666-8888', 'pml@cs.sunysb.edu','6789-2345-6789-2345');

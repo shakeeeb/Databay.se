@@ -1,7 +1,7 @@
 /*******************************************************************************
 * CSE 305: Fall 2015 Online Auction Project
 * Team: Databay.se
-* Members: Miuki Yip, Terrell Mack, Shakeeb Saleh
+* Members: Miu ki Yip, Terrell Mack, Shakeeb Saleh
 *******************************************************************************/
 drop database if exists DATABAYSE;
 create database DATABAYSE;
@@ -43,7 +43,7 @@ Employee: represents employee overseeing transaction
 *******************************************************************************/
 CREATE TABLE Employee (
   EmployeeID INTEGER AUTO_INCREMENT,
-  SSID INTEGER,
+  SSN CHAR(14),
   FirstName CHAR(32) NOT NULL,
   LastName CHAR(32) NOT NULL,
   Address CHAR(128) NOT NULL,
@@ -52,7 +52,7 @@ CREATE TABLE Employee (
   ZipCode INTEGER NOT NULL,
   Telephone CHAR(20),
   StartDate DATE,
-  HourlyRate FLOAT NOT NULL,
+  HourlyRate INTEGER NOT NULL,
   PRIMARY KEY(EmployeeID));
 
 /*******************************************************************************
@@ -109,10 +109,32 @@ CREATE PROCEDURE testSelect()
 BEGIN
 SELECT *
 FROM Customer;
+
+CREATE PROCEDURE addEmployee(IN empl_ssn, IN empl_fn CHAR(32), IN empl_ln CHAR(32),
+IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
+INTEGER, IN empl_tel CHAR(20), IN empl_sd DATE, IN empl_hr INTEGER)
+BEGIN
+insert into DATABAYSE.Employee(SSN, FirstName, LastName, Address, City,
+  State, ZipCode, Telephone, StartDate, HourlyRate)
+  values(empl_ssn, empl_fn, empl_ln, empl_addr, empl_city , empl_state, empl_zip,
+    empl_tel,empl_sd,empl_hr);
+End
+$$
+
+CREATE PROCEDURE addItem(IN itemID INTEGER, IN itemName CHAR(20),
+IN itemType CHAR(12), IN itemYear INTEGER, IN itemCopiesSold INTEGER, IN itemAmountInStock
+INTEGER)
+
+CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
+BEGIN
+insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
+  values(itemName, itemType, itemYear, itemAmountInStock);
+
 End
 $$
 
 DELIMITER ;
+
 
 /*******************************************************************************
 TODO: figure out a way to make domains since they don't exist in mysql, also a
