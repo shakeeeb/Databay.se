@@ -133,7 +133,6 @@ insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningD
 End
 $$
 
-
 DELIMITER ;
 
 
