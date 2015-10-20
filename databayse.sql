@@ -104,6 +104,7 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
 End
 $$
 
+
 CREATE PROCEDURE addEmployee(IN empl_ssn CHAR(14), IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
 INTEGER, IN empl_tel CHAR(20), IN empl_sd DATE, IN empl_hr INTEGER)
@@ -124,15 +125,15 @@ insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
 End
 $$
 
+
 CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
 BEGIN
-#SELECT CURRENT_DATE();
-#DECLARE start_date DATE;
-#set start_date = CURRENT_DATE();
-#DECLARE start_time TIME; #= CURRENT_TIME;
-#DECLARE closing_date DATE = ;
-#DECLARE closing_time TIME = start_time; #defaults exactly 3 days later
-#DECLARE increment DECIMAL(8,2) = opening_bid/8;# let the default increment be 1/8 the initial price
+start_date DATE = CURRENT_DATE;
+start_time TIME = CURRENT_TIME;
+closing_date DATE = ADDDATE(start_date, INTERVAL 3 DAY);
+closing_time TIME = start_time; #defaults exactly 3 days later
+increment DECIMAL(8,2) = opening_bid/8; #let the default increment be 1/8 the initial price
+>>>>>>> e91a850e0ba17c05046ecc7b71077a636c18fc66
 insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment)
   values(Lower(seller_id), item_id, employee_id, opening_bid, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, (opening_bid/8)
     );
