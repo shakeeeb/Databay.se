@@ -87,6 +87,20 @@ CREATE TABLE Auction (
   FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
   ON DELETE NO ACTION);
 
+
+CREATE TABLE Bid (
+  AuctionID INTEGER,
+  CustomerID CHAR(32),
+  BidDate DATE,
+  BidTime TIME,
+  PRIMARY KEY(AuctionID, CustomerID, BidDate, BidTime),
+  FOREIGN KEY(AuctionID) REFERENCES Auction(AuctionID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  FOREIGN KEY(CustomerID) REFERENCES Customer(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE);
+
 DELIMITER $$
 /*******************************************************************************
 ADDS A NEW CUSTOMER TO THE CUSTOMER TABLE
@@ -103,7 +117,6 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
     cust_tel, cust_email, cust_cc);
 End
 $$
-
 
 CREATE PROCEDURE addEmployee(IN empl_ssn CHAR(14), IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
@@ -124,10 +137,9 @@ insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
 End
 $$
 
-
 CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
 BEGIN
-insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment)
+insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve)
   values(Lower(seller_id), item_id, employee_id, opening_bid, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, (opening_bid/8)
     );
 End
