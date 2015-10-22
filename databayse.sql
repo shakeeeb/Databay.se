@@ -139,13 +139,46 @@ $$
 
 CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
 BEGIN
-insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve)
+insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment)
   values(Lower(seller_id), item_id, employee_id, opening_bid, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, (opening_bid/8)
     );
 End
 $$
 
+CREATE PROCEDURE getMonthlySalesReport(in Month INTEGER)
+BEGIN
+SELECT I.Name, SUM(A.ClosingBid)
+FROM Item I, Auction A
+WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID
+GROUP BY I.Name, I.Type;
+End
+$$
+
+CREATE PROCEDURE getCustomerRep()
+BEGIN
+SELECT E.*
+FROM Employee E;
+End
+$$
+ /* WHY WONT THIS WORK ITS DRIVING ME BONKERS*/
+CREATE PROCEDURE getBestCustomerRep()
+BEGIN
+SELECT E.* #E.*
+FROM employeeRevenue RV
+  JOIN Employee E
+  ON E.EmployeeID = RV.ID
+ORDER BY RV.Total DESC
+LIMIT 1;
+End
+$$
+
 DELIMITER ;
+
+CREATE VIEW employeeRevenue AS
+SELECT E.EmployeeID AS ID, SUM(A.ClosingBid) AS Total
+FROM Auction A, Employee E
+WHERE A.EmployeeID = E.EmployeeID
+GROUP BY E.EmployeeID;
 
 
 /*******************************************************************************
