@@ -1,5 +1,6 @@
-source customer_data.sql;
-source employee_data.sql;
-source item_data.sql;
-source auction_data.sql;
-source post_data.sql;
+USE DATABAYSE;
+source ./demodata/customer_data.sql;
+source ./demodata/employee_data.sql;
+source ./demodata/item_data.sql;
+source ./demodata/auction_data.sql;
+source ./demodata/post_data.sql;

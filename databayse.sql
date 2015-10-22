@@ -15,8 +15,8 @@ CREATE TABLE Item (
   Name CHAR(20) NOT NULL,
   Type CHAR(12),
   Year INTEGER,
-  CopiesSold INTEGER,
-  AmountInStock INTEGER,
+  CopiesSold INTEGER DEFAULT 0,
+  AmountInStock INTEGER DEFAULT 0,
   PRIMARY KEY(ItemID));
 
 /*******************************************************************************
@@ -53,6 +53,7 @@ CREATE TABLE Employee (
   Telephone CHAR(20),
   StartDate DATE,
   HourlyRate INTEGER NOT NULL,
+  IsManager TINYINT(1) DEFAULT 0,
   PRIMARY KEY(EmployeeID));
 
 /*******************************************************************************
@@ -74,6 +75,7 @@ CREATE TABLE Auction (
   ClosingTime TIME,
   Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
   Increment DECIMAL(8,2), # The lowest amount a bid can increase
+  isComplete TINYINT(1) DEFAULT 0,
   PRIMARY KEY(AuctionID),
   FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
     ON DELETE NO ACTION
@@ -103,6 +105,9 @@ CREATE TABLE Bid (
     ON DELETE NO ACTION
     ON UPDATE CASCADE);
 
+/*******************************************************************************
+Post: represents all auctions that have ended
+*******************************************************************************/
 CREATE TABLE Post (
   AuctionID INTEGER,
   CustomerID CHAR(32),
@@ -135,6 +140,9 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
 End
 $$
 
+/*******************************************************************************
+THESE NEXT FEW PROCEDURES ARE FOR ADDING EDITING AND REMOVING EMPLOYEES
+*******************************************************************************/
 CREATE PROCEDURE addEmployee(IN empl_ssn CHAR(14), IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
 INTEGER, IN empl_tel CHAR(20), IN empl_sd DATE, IN empl_hr INTEGER)
@@ -179,10 +187,19 @@ insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningD
 End
 $$
 
+CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
+BEGIN
+UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
+End
+$$
+
 CREATE PROCEDURE addPost(IN auctionID INTEGER, IN customerID CHAR(32), IN postDate DATE, IN postTime Time, IN expireDate Date, IN expireTime Time)
 BEGIN
 insert into DATABAYSE.Post(AuctionID, CustomerID, PostDate, PostTime, ExpireDate, ExpireTime)
   values(auctionID, customerID, postDate, postTime, expireDate, expireTime);
+
+  UPDATE Auction SET ClosingBid = 17.38 WHERE AuctionID = auctionID; #TODO remove this is just for testing revenues
+  UPDATE AUCTION SET isComplete = 1 WHERE AuctionID = auctionID;
 
 End
 $$
@@ -193,6 +210,34 @@ $$
 
 
 */
+
+/*******************************************************************************
+These next few procedures return different type of Revenu
+*******************************************************************************/
+
+# Selects the revenue from a particular item
+CREATE PROCEDURE getRevenueByItem(IN itemName Char(20))
+BEGIN
+  SELECT SUM(A.ClosingBid)
+  FROM Auction A, Item I
+  WHERE I.Name = itemName AND I.ItemID = A.ItemID AND A.isComplete = 1;
+End $$
+
+# Selects the revenue from a particular type of item
+CREATE PROCEDURE getRevenueByType(IN itemType Char(12))
+BEGIN
+  SELECT SUM(A.ClosingBid)
+  FROM Auction A, Item I
+  WHERE I.Type = itemType AND I.ItemID = A.ItemID AND A.isComplete = 1;
+End $$
+
+# Selects the revenue from a particular type of customer
+CREATE PROCEDURE getRevenueByCustomer(IN customerName Char(32))
+BEGIN
+  SELECT SUM(A.ClosingBid)
+  FROM Auction A, Customer C
+  WHERE C.CustomerID = customerName AND C.CustomerID = A.SellerID AND A.isComplete = 1;
+End $$
 
 
 DELIMITER ;
@@ -224,60 +269,12 @@ CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalCl
 
   GROUP BY C.CustomerID;
 
-/*
-CREATE TABLE Post (
-  AuctionID INTEGER,
-  CustomerID CHAR(32),
-  PostDate DATE,
-  PostTime TIME,
-  ExpireDate DATE,
-  ExpireTime TIME,
-  PRIMARY KEY(AuctionID, CustomerID),
-  FOREIGN KEY(AuctionID) REFERENCES Auction(AuctionID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  FOREIGN KEY(CustomerID) REFERENCES Customer(CustomerID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE);
+# Produce a mailing list of customers
+CREATE VIEW DATABAYSE.customerMailingList(LastName, FirstName, Address, City, State, ZipCode) AS
+  SELECT C.LastName, C.FirstName, C.Address, C.City, C.State, C.ZipCode
+  FROM Customer C;
 
-CREATE TABLE Auction (
-  AuctionID INTEGER AUTO_INCREMENT,
-  ItemID INTEGER,
-  SellerID CHAR(32),
-  BuyerID CHAR(32),
-  EmployeeID INTEGER,
-  OpeningBid DECIMAL(8,2),
-  ClosingBid DECIMAL(8,2),
-  CurrentBid DECIMAL(8,2),
-  CurrentHighBid DECIMAL(8,2),
-  OpeningDate DATE,
-  OpeningTime TIME,
-  ClosingDate DATE,
-  ClosingTime TIME,
-  Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
-  Increment DECIMAL(8,2), # The lowest amount a bid can increase
-  PRIMARY KEY(AuctionID),
-  FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  FOREIGN KEY(BuyerID) REFERENCES Customer(CustomerID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  FOREIGN KEY(SellerID) REFERENCES Customer(CustomerID)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION, # only one seller
-  FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
-  ON DELETE NO ACTION);
 
-CREATE TABLE Item (
-  ItemID INTEGER AUTO_INCREMENT,
-  Name CHAR(20) NOT NULL,
-  Type CHAR(12),
-  Year INTEGER,
-  CopiesSold INTEGER,
-  AmountInStock INTEGER,
-  PRIMARY KEY(ItemID));
-*/
 /*******************************************************************************
 TODO: figure out a way to make domains since they don't exist in mysql, also a
 way to define constants like name CHAR(20) might be useful
