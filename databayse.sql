@@ -85,9 +85,11 @@ CREATE TABLE Auction (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION, # only one seller
   FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
-  ON DELETE NO ACTION);
+  ON DELETE SET NULL); #TODO check if this is OK
 
-
+/*******************************************************************************
+Bid: represents an auction bid
+*******************************************************************************/
 CREATE TABLE Bid (
   AuctionID INTEGER,
   CustomerID CHAR(32),
@@ -129,6 +131,23 @@ insert into DATABAYSE.Employee(SSN, FirstName, LastName, Address, City,
 End
 $$
 
+CREATE PROCEDURE editEmployee(IN emplID INTEGER, IN empl_fn CHAR(32), IN empl_ln CHAR(32),
+IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
+INTEGER, IN empl_tel CHAR(20), IN empl_hr INTEGER)
+BEGIN
+ UPDATE Employee
+ SET FirstName = empl_fn, LastName = empl_ln, Address = empl_addr, City = empl_city,
+ State = empl_state, ZipCode = empl_zip, Telephone = empl_tel, HourlyRate = empl_hr
+ WHERE EmployeeID = emplID;
+End
+$$
+
+CREATE PROCEDURE deleteEmployee(In emplID INTEGER)
+BEGIN
+  DELETE FROM Employee WHERE EmployeeID = emplID;
+End
+$$
+
 CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
 BEGIN
 insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
@@ -139,7 +158,7 @@ $$
 
 CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
 BEGIN
-insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve)
+insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment)
   values(Lower(seller_id), item_id, employee_id, opening_bid, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, (opening_bid/8)
     );
 End
