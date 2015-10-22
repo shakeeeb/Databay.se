@@ -187,9 +187,32 @@ insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningD
 End
 $$
 
+#<<<<<<< HEAD
 CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
 BEGIN
 UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
+#=======
+End
+$$
+
+CREATE PROCEDURE getMonthlySalesReport(in Month INTEGER)
+BEGIN
+SELECT I.Name, SUM(A.ClosingBid)
+FROM Item I, Auction A
+WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID
+GROUP BY I.Name, I.Type;
+End
+$$
+
+CREATE PROCEDURE getBestCustomerRep()
+BEGIN
+SELECT E.* #E.*
+FROM employeeRevenue RV
+  JOIN Employee E
+  ON E.EmployeeID = RV.ID
+ORDER BY RV.Total DESC
+LIMIT 1;
+
 End
 $$
 
@@ -249,6 +272,12 @@ CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock)
   FROM Item I
   GROUP BY Name;
 
+/*produce a list of employees by total revenue*/
+  CREATE VIEW DATABAYSE.employeeRevenue(ID, Total) AS
+  SELECT E.EmployeeID, SUM(A.ClosingBid)
+  FROM Auction A, Employee E
+  WHERE A.EmployeeID = E.EmployeeID
+  GROUP BY E.EmployeeID;
 
 /* Produce a list of sales by item name */
 CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) AS
@@ -274,6 +303,39 @@ CREATE VIEW DATABAYSE.customerMailingList(LastName, FirstName, Address, City, St
   SELECT C.LastName, C.FirstName, C.Address, C.City, C.State, C.ZipCode
   FROM Customer C;
 
+/*
+<<<<<<< HEAD
+=======
+CREATE TABLE Auction (
+  AuctionID INTEGER AUTO_INCREMENT,
+  ItemID INTEGER,
+  SellerID CHAR(32),
+  BuyerID CHAR(32),
+  EmployeeID INTEGER,
+  OpeningBid DECIMAL(8,2),
+  ClosingBid DECIMAL(8,2),
+  CurrentBid DECIMAL(8,2),
+  CurrentHighBid DECIMAL(8,2),
+  OpeningDate DATE,
+  OpeningTime TIME,
+  ClosingDate DATE,
+  ClosingTime TIME,
+  Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
+  Increment DECIMAL(8,2), # The lowest amount a bid can increase
+  PRIMARY KEY(AuctionID),
+  FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  FOREIGN KEY(BuyerID) REFERENCES Customer(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  FOREIGN KEY(SellerID) REFERENCES Customer(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION, # only one seller
+  FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
+  ON DELETE NO ACTION);
+>>>>>>> 476f798c165b2db1d9159157d7d82ac54584c137
+>>>>>>> 9891e27266f4a15ab653da40d7c63d996efa721b*/
 
 /*******************************************************************************
 TODO: figure out a way to make domains since they don't exist in mysql, also a
