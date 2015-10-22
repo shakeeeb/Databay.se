@@ -101,6 +101,21 @@ CREATE TABLE Bid (
     ON DELETE NO ACTION
     ON UPDATE CASCADE);
 
+CREATE TABLE Post (
+  AuctionID INTEGER,
+  CustomerID CHAR(32),
+  PostDate DATE,
+  PostTime TIME,
+  ExpireDate DATE,
+  ExpireTime TIME,
+  PRIMARY KEY(AuctionID, CustomerID),
+  FOREIGN KEY(AuctionID) REFERENCES Auction(AuctionID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  FOREIGN KEY(CustomerID) REFERENCES Customer(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE);
+
 DELIMITER $$
 /*******************************************************************************
 ADDS A NEW CUSTOMER TO THE CUSTOMER TABLE
@@ -129,6 +144,7 @@ insert into DATABAYSE.Employee(SSN, FirstName, LastName, Address, City,
 End
 $$
 
+
 CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
 BEGIN
 insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
@@ -139,15 +155,111 @@ $$
 
 CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
 BEGIN
-insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve)
+insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment)
   values(Lower(seller_id), item_id, employee_id, opening_bid, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, (opening_bid/8)
     );
 End
 $$
 
+CREATE PROCEDURE addPost(IN auctionID INTEGER, IN customerID CHAR(32), IN postDate DATE, IN postTime Time, IN expireDate Date, IN expireTime Time)
+BEGIN
+insert into DATABAYSE.Post(AuctionID, CustomerID, PostDate, PostTime, ExpireDate, ExpireTime)
+  values(auctionID, customerID, postDate, postTime, expireDate, expireTime);
+
+End
+$$
+
+/*
+
+  
+
+
+*/
+
+
 DELIMITER ;
 
+/* Produce a comprehensive listing of all items  */
+/* TODO: More than one variable name for the group by section?! */
+CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock) AS 
+  SELECT Name, Type, Year, CopiesSold, AmountInStock
+  FROM Item I
+  GROUP BY Name;
 
+
+/* Produce a list of sales by item name */
+CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) AS
+  SELECT I.Name, SUM(I.CopiesSold), SUM(A.ClosingBid)
+  FROM Post P, Item I, Auction A
+  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
+  GROUP BY I.Name;
+
+  /* Produce a list of sales by customer name */
+CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalClosingBids) AS
+  SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
+  FROM Post P, Item I, Auction A, Customer C
+  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
+  #
+
+    #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
+  #
+
+  GROUP BY C.CustomerID;
+
+/*
+CREATE TABLE Post (
+  AuctionID INTEGER,
+  CustomerID CHAR(32),
+  PostDate DATE,
+  PostTime TIME,
+  ExpireDate DATE,
+  ExpireTime TIME,
+  PRIMARY KEY(AuctionID, CustomerID),
+  FOREIGN KEY(AuctionID) REFERENCES Auction(AuctionID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  FOREIGN KEY(CustomerID) REFERENCES Customer(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE);
+
+CREATE TABLE Auction (
+  AuctionID INTEGER AUTO_INCREMENT,
+  ItemID INTEGER,
+  SellerID CHAR(32),
+  BuyerID CHAR(32),
+  EmployeeID INTEGER,
+  OpeningBid DECIMAL(8,2),
+  ClosingBid DECIMAL(8,2),
+  CurrentBid DECIMAL(8,2),
+  CurrentHighBid DECIMAL(8,2),
+  OpeningDate DATE,
+  OpeningTime TIME,
+  ClosingDate DATE,
+  ClosingTime TIME,
+  Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
+  Increment DECIMAL(8,2), # The lowest amount a bid can increase
+  PRIMARY KEY(AuctionID),
+  FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  FOREIGN KEY(BuyerID) REFERENCES Customer(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE CASCADE,
+  FOREIGN KEY(SellerID) REFERENCES Customer(CustomerID)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION, # only one seller
+  FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
+  ON DELETE NO ACTION);
+
+CREATE TABLE Item (
+  ItemID INTEGER AUTO_INCREMENT,
+  Name CHAR(20) NOT NULL,
+  Type CHAR(12),
+  Year INTEGER,
+  CopiesSold INTEGER,
+  AmountInStock INTEGER,
+  PRIMARY KEY(ItemID));
+*/
 /*******************************************************************************
 TODO: figure out a way to make domains since they don't exist in mysql, also a
 way to define constants like name CHAR(20) might be useful
