@@ -372,10 +372,8 @@ CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) A
 /* Produce a list of sales by customer name */
 CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalClosingBids) AS
   SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
-  FROM Post P, Item I, Auction A, Customer C
-  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
-  #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
-  #
+  FROM Item I, Auction A, Customer C
+  WHERE A.isComplete = 1 AND A.SellerID = C.CustomerID 
   GROUP BY C.CustomerID;
 
 # Produce a mailing list of customers
