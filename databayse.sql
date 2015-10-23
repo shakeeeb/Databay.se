@@ -227,13 +227,43 @@ LIMIT 1;
 End
 $$
 
+CREATE PROCEDURE getBestBuyer()
+BEGIN
+SELECT C.*
+FROM BuyersWhoSpentBank CV
+  JOIN Customer C
+  ON CV.BuyerID = C.CustomerID
+ORDER BY CV.Total DESC
+LIMIT 1;
+End
+$$
+
+CREATE PROCEDURE getBestMerchant()
+BEGIN
+SELECT C.*
+FROM SellersWhoMadeBank CV
+  JOIN Customer C
+  ON CV.SellerID = C.CustomerID
+ORDER BY CV.Total DESC
+LIMIT 1;
+End
+$$
+
+CREATE PROCEDURE getSuggestionsByType(IN customerID CHAR(32))
+BEGIN
+SELECT I.*
+FROM getTypesForSuggestion S, Item I
+WHERE S.Type = I.Type AND S.CustomerID = customerID;
+End
+$$
+
 CREATE PROCEDURE addPost(IN auctionID INTEGER, IN customerID CHAR(32), IN postDate DATE, IN postTime Time, IN expireDate Date, IN expireTime Time)
 BEGIN
 insert into DATABAYSE.Post(AuctionID, CustomerID, PostDate, PostTime, ExpireDate, ExpireTime)
   values(auctionID, customerID, postDate, postTime, expireDate, expireTime);
 
   UPDATE Auction SET ClosingBid = 17.38 WHERE AuctionID = auctionID; #TODO remove this is just for testing revenues
-  UPDATE AUCTION SET isComplete = 1 WHERE AuctionID = auctionID; #TODO remove
+  UPDATE Auction SET isComplete = 1 WHERE AuctionID = auctionID; #TODO remove
 
 End
 $$
@@ -359,9 +389,29 @@ CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock)
   CREATE VIEW DATABAYSE.employeeRevenue(ID, Total) AS
   SELECT E.EmployeeID, SUM(A.ClosingBid)
   FROM Auction A, Employee E
-  WHERE A.EmployeeID = E.EmployeeID
+  WHERE A.EmployeeID = E.EmployeeID AND A.isComplete = 1
   GROUP BY E.EmployeeID;
 
+/*produce a list of customers by revenue, the most successful sellers*/
+  CREATE VIEW DATABAYSE.SellersWhoMadeBank(SellerID, Total) AS
+  SELECT C.CustomerID , SUM(A.ClosingBid)
+  FROM Auction A, Customer C
+  WHERE A.SellerID = C.CustomerID AND A.isComplete = 1
+  GROUP BY C.CustomerID;
+
+/*produce a list of customers by revenue, the most frequent buyers*/
+  CREATE VIEW DATABAYSE.BuyersWhoSpentBank(BuyerID, Total) AS
+  SELECT C.CustomerID , SUM(A.ClosingBid)
+  FROM Auction A, Customer C
+  WHERE A.BuyerID = C.CustomerID AND A.isComplete = 1
+  GROUP BY C.CustomerID;
+
+/* produce a list of types by customer*/
+  CREATE VIEW DATABAYSE.getTypesForSuggestion(CustomerID, Type) AS
+  SELECT C.CustomerID, I.Type
+  FROM Customer C, Item I, Auction A
+  WHERE A.BuyerID = C.CustomerID AND A.ItemID = I.ItemID
+  GROUP BY I.Type;
 /* Produce a list of sales by item name */
 CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) AS
   SELECT I.Name, SUM(I.CopiesSold), SUM(A.ClosingBid)
