@@ -139,11 +139,10 @@ insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
   State, ZipCode, Telephone, Email, CreditCard)
   values(Lower(cust_fn), cust_fn, cust_ln, cust_addr, cust_city , cust_state, cust_zip,
     cust_tel, cust_email, cust_cc);
-End
-$$
+End $$
 
 /*******************************************************************************
-THESE NEXT FEW PROCEDURES ARE FOR ADDING EDITING AND REMOVING EMPLOYEES
+THESE NEXT FEW PROCEDURES ARE FOR ADDING EDITING AND REMOVING EMPLOYEES.
 *******************************************************************************/
 CREATE PROCEDURE addEmployee(IN empl_ssn CHAR(14), IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
@@ -153,8 +152,7 @@ insert into DATABAYSE.Employee(SSN, FirstName, LastName, Address, City,
   State, ZipCode, Telephone, StartDate, HourlyRate)
   values(empl_ssn, empl_fn, empl_ln, empl_addr, empl_city , empl_state, empl_zip,
     empl_tel,empl_sd,empl_hr);
-End
-$$
+End $$
 
 CREATE PROCEDURE editEmployee(IN emplID INTEGER, IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
@@ -164,14 +162,12 @@ BEGIN
  SET FirstName = empl_fn, LastName = empl_ln, Address = empl_addr, City = empl_city,
  State = empl_state, ZipCode = empl_zip, Telephone = empl_tel, HourlyRate = empl_hr
  WHERE EmployeeID = emplID;
-End
-$$
+End $$
 
 CREATE PROCEDURE deleteEmployee(In emplID INTEGER)
 BEGIN
   DELETE FROM Employee WHERE EmployeeID = emplID;
-End
-$$
+End $$
 
 CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
 BEGIN
@@ -189,31 +185,27 @@ ELSE
   UPDATE Item SET AmountInStock = AmountInStock + itemAmountInStock WHERE itemName LIKE Name;
 END IF;
 
-End
-$$
+End $$
 
 CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
 BEGIN
 insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment)
   values(Lower(seller_id), item_id, employee_id, opening_bid, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, (opening_bid/8)
     );
-End
-$$
+End $$
 
 CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
 BEGIN
 UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
-End
-$$
+End $$
 
 CREATE PROCEDURE getMonthlySalesReport(in Month INTEGER)
 BEGIN
-SELECT I.Name, SUM(A.ClosingBid)
-FROM Item I, Auction A
-WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID
-GROUP BY I.Name, I.Type;
-End
-$$
+  SELECT I.Name, SUM(A.ClosingBid)
+  FROM Item I, Auction A
+  WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID
+  GROUP BY I.Name, I.Type;
+End $$
 
 CREATE PROCEDURE getBestCustomerRep()
 BEGIN
@@ -223,9 +215,7 @@ FROM employeeRevenue RV
   ON E.EmployeeID = RV.ID
 ORDER BY RV.Total DESC
 LIMIT 1;
-
-End
-$$
+End $$
 
 CREATE PROCEDURE getBestBuyer()
 BEGIN
@@ -261,27 +251,29 @@ CREATE PROCEDURE addPost(IN auctionID INTEGER, IN customerID CHAR(32), IN postDa
 BEGIN
 insert into DATABAYSE.Post(AuctionID, CustomerID, PostDate, PostTime, ExpireDate, ExpireTime)
   values(auctionID, customerID, postDate, postTime, expireDate, expireTime);
-
   UPDATE Auction SET ClosingBid = 17.38 WHERE AuctionID = auctionID; #TODO remove this is just for testing revenues
   UPDATE Auction SET isComplete = 1 WHERE AuctionID = auctionID; #TODO remove
-
 End
 $$
 
+
 CREATE PROCEDURE endAuction(IN auctionID INTEGER)
 BEGIN
-
 # SET AUCTION BOOLEAN TO TRUE
 # SET ClosingBid TODO: doesn't work yet
+/*
 UPDATE Auction
 SET isComplete = 1 AND ClosingBid = CurrentHighBid
-WHERE AuctionID = auctionID;
+WHERE AuctionID = auctionID;*/
+/*
+UPDATE Item
+SET
+WHERE*/
 # SET ITEM COPIESSOLD ++
 # SET AMOUNTINSTOCK --
 # SET CUSTOMER ITEMS SOLD ++
 # SET CUSTOMER ITEMSPURCHAESED ++
-END
-$$
+END $$
 
 # Selects the revenue from a particular item
 CREATE PROCEDURE getRevenueByItem(IN itemName Char(20))
@@ -317,8 +309,10 @@ END $$
 CREATE PROCEDURE addBid(IN auctID INTEGER, IN custID CHAR(32),
 IN newBid DECIMAL(8,2), IN newMaxBid DECIMAL(8,2))
 BEGIN
+ #TODO: when an auction is over don't let someone bid
   INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
     values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
+
 END $$
 
 CREATE PROCEDURE getBidHistory(IN custID CHAR(32), IN auctID INTEGER)
@@ -364,7 +358,6 @@ BEGIN
   FROM  Auction A, Item I
   Where INSTR(I.Name, itemName) > 0 AND I.ItemID AND A.isComplete = 0 #INSTR() returns the number of characters that match between two strings
   GROUP BY A.AuctionID;
-
 END $$
 
 /* TODO fix this
@@ -376,6 +369,13 @@ CREATE TRIGGER check_Auction_Over BEFORE UPDATE ON Auction
          END IF;
      END $$
 */
+
+CREATE TRIGGER no_updates_on_complete_auction BEFORE UPDATE ON Auction
+  FOR EACH ROW
+  BEGIN
+
+  END $$
+
 DELIMITER ;
 
 /* Produce a comprehensive listing of all items  */
@@ -415,7 +415,7 @@ CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock)
 /* Produce a list of sales by item name */
 CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) AS
   SELECT I.Name, SUM(I.CopiesSold), SUM(A.ClosingBid)
-  FROM Post P, Item I, Auction A
+  FROM Item I, Auction A
   #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
   GROUP BY I.Name;
 
@@ -425,7 +425,6 @@ CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalCl
   FROM Post P, Item I, Auction A, Customer C
   #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
   #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
-  #
   GROUP BY C.CustomerID;
 
 # Produce a mailing list of customers
