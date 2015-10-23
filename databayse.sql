@@ -233,7 +233,7 @@ insert into DATABAYSE.Post(AuctionID, CustomerID, PostDate, PostTime, ExpireDate
   values(auctionID, customerID, postDate, postTime, expireDate, expireTime);
 
   UPDATE Auction SET ClosingBid = 17.38 WHERE AuctionID = auctionID; #TODO remove this is just for testing revenues
-  UPDATE AUCTION SET isComplete = 1 WHERE AuctionID = auctionID; #TODO remove
+  UPDATE Auction SET isComplete = 1 WHERE AuctionID = auctionID; #TODO remove
 
 End
 $$
