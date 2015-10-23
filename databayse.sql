@@ -337,6 +337,36 @@ BEGIN
 
 END $$
 
+CREATE PROCEDURE deleteCustomer(In custID INTEGER)
+BEGIN
+  DELETE FROM Employee WHERE CustomerID = custID;
+End
+$$
+
+CREATE PROCEDURE editCustomer(IN custID INTEGER, IN cust_fn CHAR(32), IN cust_ln CHAR(32),
+IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
+INTEGER, IN cust_tel CHAR(20), IN cust_cc CHAR(20), IN cust_email CHAR(128), 
+IN cust_isold INTEGER, IN cust_ipurch INTEGER, IN cust_rating INTEGER)
+BEGIN
+ UPDATE Employee
+ SET FirstName = cust_fn, LastName = cust_ln, Address = cust_addr, City = cust_city,
+ State = cust_state, ZipCode = cust_zip, Telephone = cust_tel, CreditCard = cust_cc,
+ Email = cust_email, ItemsSold = cust_isold, ItemsPurchased = cust_ipurch, Rating = cust_rating
+ WHERE CustomerID = custID;
+End
+$$
+
+#TODO CHECK THAT YOU ARE SELECTING ALL THE NECESSARY AUCTION DATA FOR THESE PROCEDURES
+CREATE PROCEDURE getOpenAuctions(IN custID CHAR(32))
+BEGIN
+#TODO are we supposed to include being a seller as participant
+  SELECT I.Name, A.AuctionID, A.isComplete
+  FROM Bid B, Auction A, Item I
+  Where (B.CustomerID = custID AND B.AuctionID = A.AuctionID AND A.isComplete = 0) OR A.SellerID = custID
+  AND A.ItemID = I.ItemID AND A.isComplete = 0
+  GROUP BY A.AuctionID;
+END $$
+
 /* TODO fix this
 CREATE TRIGGER check_Auction_Over BEFORE UPDATE ON Auction
      FOR EACH ROW
@@ -390,3 +420,6 @@ CREATE VIEW DATABAYSE.bestSellersList(Name, Type, Year, CopiesSold) AS
   SELECT *
   FROM itemsSold
   ORDER BY CopiesSold DESC LIMIT 10; # DESC: descending order
+
+
+/* TA: GRANT PERMISSION? CHECK TRANSACTION? */
