@@ -86,7 +86,7 @@ CREATE TABLE Auction (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION, # only one seller
   FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
-  ON DELETE SET NULL); #TODO check if this is OK
+    ON DELETE SET NULL); #TODO check if this is OK
 
 /*******************************************************************************
 Bid: represents an auction bid
@@ -175,8 +175,19 @@ $$
 
 CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
 BEGIN
-insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
+
+# THIS MAKES SURE THERE ARENT ANY DUPLICATES IN THE TABLE
+DECLARE itemCount INTEGER;
+SELECT COUNT(Name) INTO itemCount
+FROM Item
+WHERE itemName LIKE Name AND itemType LIKE Type AND itemYear = Year;
+
+IF itemCount = 0 THEN
+  insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
   values(itemName, itemType, itemYear, itemAmountInStock);
+ELSE
+  UPDATE Item SET AmountInStock = AmountInStock + itemAmountInStock WHERE itemName LIKE Name;
+END IF;
 
 End
 $$
@@ -222,21 +233,25 @@ insert into DATABAYSE.Post(AuctionID, CustomerID, PostDate, PostTime, ExpireDate
   values(auctionID, customerID, postDate, postTime, expireDate, expireTime);
 
   UPDATE Auction SET ClosingBid = 17.38 WHERE AuctionID = auctionID; #TODO remove this is just for testing revenues
-  UPDATE AUCTION SET isComplete = 1 WHERE AuctionID = auctionID;
+  UPDATE AUCTION SET isComplete = 1 WHERE AuctionID = auctionID; #TODO remove
 
 End
 $$
 
-/*
+CREATE PROCEDURE endAuction(IN auctionID INTEGER)
+BEGIN
 
-
-
-
-*/
-
-/*******************************************************************************
-These next few procedures return different types of Revenue
-*******************************************************************************/
+# SET AUCTION BOOLEAN TO TRUE
+# SET ClosingBid TODO: doesn't work yet
+UPDATE Auction
+SET isComplete = 1 AND ClosingBid = CurrentHighBid
+WHERE AuctionID = auctionID;
+# SET ITEM COPIESSOLD ++
+# SET AMOUNTINSTOCK --
+# SET CUSTOMER ITEMS SOLD ++
+# SET CUSTOMER ITEMSPURCHAESED ++
+END
+$$
 
 # Selects the revenue from a particular item
 CREATE PROCEDURE getRevenueByItem(IN itemName Char(20))
@@ -322,6 +337,15 @@ BEGIN
 
 END $$
 
+/* TODO fix this
+CREATE TRIGGER check_Auction_Over BEFORE UPDATE ON Auction
+     FOR EACH ROW
+     BEGIN
+         IF TIMEDIFF(CURRENT_TIME, ClosingTime) >= 0 THEN# >= ClosingTime OR CURRENT_DATE >= ClosingDate THEN
+             call getRevenueByItem('test'); # END auctions
+         END IF;
+     END $$
+*/
 DELIMITER ;
 
 /* Produce a comprehensive listing of all items  */
@@ -350,9 +374,7 @@ CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalCl
   SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
   FROM Post P, Item I, Auction A, Customer C
   #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
-  #
-
-    #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
+  #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
   #
   GROUP BY C.CustomerID;
 
