@@ -67,7 +67,6 @@ CREATE TABLE Auction (
   EmployeeID INTEGER,
   OpeningBid DECIMAL(8,2),
   ClosingBid DECIMAL(8,2),
-  CurrentBid DECIMAL(8,2),
   CurrentHighBid DECIMAL(8,2),
   OpeningDate DATE,
   OpeningTime TIME,
@@ -93,11 +92,14 @@ CREATE TABLE Auction (
 Bid: represents an auction bid
 *******************************************************************************/
 CREATE TABLE Bid (
+  BidID INTEGER AUTO_INCREMENT,
   AuctionID INTEGER,
   CustomerID CHAR(32),
+  Bid DECIMAL(8,2),
+  MaxBid DECIMAL(8,2),
   BidDate DATE,
   BidTime TIME,
-  PRIMARY KEY(AuctionID, CustomerID, BidDate, BidTime),
+  PRIMARY KEY(BidID), #IF MULTIPLE BIDS HAPPEN AT THE SAME TIME THERE IS A CONFLICT BECAUSE THEY ARE NOT UNIQUE
   FOREIGN KEY(AuctionID) REFERENCES Auction(AuctionID)
     ON DELETE NO ACTION
     ON UPDATE CASCADE,
@@ -187,11 +189,9 @@ insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningD
 End
 $$
 
-#<<<<<<< HEAD
 CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
 BEGIN
 UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
-#=======
 End
 $$
 
@@ -206,7 +206,7 @@ $$
 
 CREATE PROCEDURE getBestCustomerRep()
 BEGIN
-SELECT E.* #E.*
+SELECT E.*
 FROM employeeRevenue RV
   JOIN Employee E
   ON E.EmployeeID = RV.ID
@@ -235,7 +235,7 @@ $$
 */
 
 /*******************************************************************************
-These next few procedures return different type of Revenu
+These next few procedures return different types of Revenue
 *******************************************************************************/
 
 # Selects the revenue from a particular item
@@ -262,6 +262,65 @@ BEGIN
   WHERE C.CustomerID = customerName AND C.CustomerID = A.SellerID AND A.isComplete = 1;
 End $$
 
+CREATE PROCEDURE getRepSales(IN empl_id INTEGER)
+BEGIN
+  SELECT E.FirstName, E.LastName, I.Name, A.AuctionID, A.ClosingBid
+  FROM Auction A, Employee E, Item I
+  WHERE E.EmployeeID = empl_id AND I.ItemID = A.ItemID AND A.isComplete = 1;
+END $$
+
+CREATE PROCEDURE addBid(IN auctID INTEGER, IN custID CHAR(32),
+IN newBid DECIMAL(8,2), IN newMaxBid DECIMAL(8,2))
+BEGIN
+  INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
+    values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
+END $$
+
+CREATE PROCEDURE getBidHistory(IN custID CHAR(32), IN auctID INTEGER)
+BEGIN
+#TODO are we supposed to show all bids or just bids from one customer
+  SELECT B.Bid, B.MaxBid, B.BidDate, B.BidTime
+  FROM Bid B
+  WHERE B.CustomerID = custID AND B.AuctionID = auctID;
+END $$
+
+#TODO CHECK THAT YOU ARE SELECTING ALL THE NECESSARY AUCTION DATA FOR THESE PROCEDURES
+CREATE PROCEDURE getPastAuctions(IN custID CHAR(32))
+BEGIN
+#TODO are we supposed to include being a seller as participant
+  SELECT I.Name, A.AuctionID, A.isComplete
+  FROM Bid B, Auction A, Item I
+  Where (B.CustomerID = custID AND B.AuctionID = A.AuctionID) OR A.SellerID = custID
+  AND A.ItemID = I.ItemID
+  GROUP BY A.AuctionID;
+END $$
+
+CREATE PROCEDURE itemsSoldBy(IN custID CHAR(32))
+BEGIN
+  SELECT I.Name, A.AuctionID, A.isComplete
+  FROM  Auction A, Item I
+  Where A.SellerID = custID AND A.ItemID = I.ItemID
+  GROUP BY A.AuctionID;
+END $$
+
+CREATE PROCEDURE itemsAvailableByType(IN itemType CHAR(32))
+BEGIN
+  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
+  A.ClosingDate, A.ClosingTime
+  FROM  Auction A, Item I
+  Where I.Type = itemType AND A.ItemID = I.ItemID AND A.isComplete = 0
+  GROUP BY A.AuctionID;
+END $$
+
+CREATE PROCEDURE itemsAvailableByKeyword(IN itemName CHAR(32))
+BEGIN
+  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
+  A.ClosingDate, A.ClosingTime
+  FROM  Auction A, Item I
+  Where INSTR(I.Name, itemName) > 0 AND I.ItemID AND A.isComplete = 0 #INSTR() returns the number of characters that match between two strings
+  GROUP BY A.AuctionID;
+
+END $$
 
 DELIMITER ;
 
@@ -286,7 +345,7 @@ CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) A
   #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
   GROUP BY I.Name;
 
-  /* Produce a list of sales by customer name */
+/* Produce a list of sales by customer name */
 CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalClosingBids) AS
   SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
   FROM Post P, Item I, Auction A, Customer C
@@ -295,7 +354,6 @@ CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalCl
 
     #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
   #
-
   GROUP BY C.CustomerID;
 
 # Produce a mailing list of customers
@@ -303,45 +361,12 @@ CREATE VIEW DATABAYSE.customerMailingList(LastName, FirstName, Address, City, St
   SELECT C.LastName, C.FirstName, C.Address, C.City, C.State, C.ZipCode
   FROM Customer C;
 
-/*
-<<<<<<< HEAD
-=======
-CREATE TABLE Auction (
-  AuctionID INTEGER AUTO_INCREMENT,
-  ItemID INTEGER,
-  SellerID CHAR(32),
-  BuyerID CHAR(32),
-  EmployeeID INTEGER,
-  OpeningBid DECIMAL(8,2),
-  ClosingBid DECIMAL(8,2),
-  CurrentBid DECIMAL(8,2),
-  CurrentHighBid DECIMAL(8,2),
-  OpeningDate DATE,
-  OpeningTime TIME,
-  ClosingDate DATE,
-  ClosingTime TIME,
-  Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
-  Increment DECIMAL(8,2), # The lowest amount a bid can increase
-  PRIMARY KEY(AuctionID),
-  FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  FOREIGN KEY(BuyerID) REFERENCES Customer(CustomerID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  FOREIGN KEY(SellerID) REFERENCES Customer(CustomerID)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION, # only one seller
-  FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
-  ON DELETE NO ACTION);
->>>>>>> 476f798c165b2db1d9159157d7d82ac54584c137
->>>>>>> 9891e27266f4a15ab653da40d7c63d996efa721b*/
+CREATE VIEW DATABAYSE.itemsSold(Name, Type, Year, CopiesSold) AS
+  SELECT I.Name, I.Type, I.Year, SUM(I.CopiesSold)
+  FROM Item I
+  GROUP BY I.Name, I.Type;
 
-/*******************************************************************************
-TODO: figure out a way to make domains since they don't exist in mysql, also a
-way to define constants like name CHAR(20) might be useful
-TYPES: represents the different categories of an item
-******************************************************************************
-CREATE DOMAIN TYPES CHAR(10)
-  CHECK(VALUE IN('Art', 'Books', 'Electronics', 'Fashion', 'Home', 'Sports',
-    'Toys', 'Other'))*/
+CREATE VIEW DATABAYSE.bestSellersList(Name, Type, Year, CopiesSold) AS
+  SELECT *
+  FROM itemsSold
+  ORDER BY CopiesSold DESC LIMIT 10; # DESC: descending order

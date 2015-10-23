@@ -1,5 +1,3 @@
-
-
 /******************************************************************************
 Adds Customer Demo Data to DATABAYSE
 Example: (you can copy and paste this to add new data)

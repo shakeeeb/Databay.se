@@ -1,4 +1,3 @@
-
 call addEmployee('123-45-6789', 'David', 'Smith', '123 College road',
   'Stony Brook', 'NY', 11790, '(516)215-2345', DATE('1998-11-1'),60);
 
