@@ -229,11 +229,14 @@ CREATE PROCEDURE endAuction(IN auctionID INTEGER)
 BEGIN
 # SET AUCTION BOOLEAN TO TRUE
 # SET ClosingBid TODO: doesn't work yet
+/*
 UPDATE Auction
 SET isComplete = 1 AND ClosingBid = CurrentHighBid
-WHERE AuctionID = auctionID;
-
-UPDATE
+WHERE AuctionID = auctionID;*/
+/*
+UPDATE Item
+SET
+WHERE*/
 # SET ITEM COPIESSOLD ++
 # SET AMOUNTINSTOCK --
 # SET CUSTOMER ITEMS SOLD ++
@@ -274,11 +277,10 @@ END $$
 CREATE PROCEDURE addBid(IN auctID INTEGER, IN custID CHAR(32),
 IN newBid DECIMAL(8,2), IN newMaxBid DECIMAL(8,2))
 BEGIN
-  IF THEN
+ #TODO: when an auction is over don't let someone bid
   INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
     values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
 
-  END IF;
 END $$
 
 CREATE PROCEDURE getBidHistory(IN custID CHAR(32), IN auctID INTEGER)
