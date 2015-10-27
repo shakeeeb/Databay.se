@@ -308,6 +308,7 @@ Where C.CustomerID = A.BuyerID;
 
 ELSE
 select "Reserve not met";
+
 END IF;
 
 END $$
