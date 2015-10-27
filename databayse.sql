@@ -266,7 +266,6 @@ $$
 
 CREATE PROCEDURE endAuction(IN auctID INTEGER)
 BEGIN
-
 DECLARE meetsReserve DECIMAL(8,2);
 DECLARE currentBid DECIMAL(8,2);
 
