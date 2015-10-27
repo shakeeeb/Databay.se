@@ -17,10 +17,10 @@ call addCustomer('John','Smith', '789 Peace Blvd', 'Los Angeles', 'CA',
 call addCustomer('Phil','Lewis', '135 Knowledge Lane', 'Stony Brook', 'NY',
 11790, '(516)666-8888', 'pml@cs.sunysb.edu','6789-2345-6789-2345');
 
-call addCustomer('oscar','the grouch', 'trashcan', 'sesame st', 'OH',
+call addCustomer('oscar','grouch', 'trashcan', 'sesame st', 'OH',
 12345, '(646)646-6446', 'trashcan@sesamest.com','0000-0000-0000-0000');
 
-call addCustomer('spongebob','squarepants', 'pineapple', 'under the sea', 'FL',
+call addCustomer('bob','square', 'pineapple', 'under the sea', 'FL',
 99999, '(999)999-0000', 'bubble@kusty.krab','1111-1111-1111-1111');
 
 call addCustomer('tom','riddle', 'a cave', 'twin city', 'MN',
@@ -30,7 +30,7 @@ call addCustomer('tom','riddle', 'a cave', 'twin city', 'MN',
 call addCustomer('jennifer','wong', 'multiplexorland', 'CC', 'Alive',
 32220, '(777)-888-999', 'prof@college.com','2222-2222-2222-2222');
 */
-call addCustomer('wakaflocka','flame', '1017 brick squad', 'atlanta', 'GA',
+call addCustomer('waka','flocka', '1017 brick squad', 'atlanta', 'GA',
 12123, '(333)333-3443', 'waka@bricksquad.com','8888-8888-8888-8888');
 
 call addCustomer('ash','ketchum', 'next to gary', 'pallet town', 'WA',
