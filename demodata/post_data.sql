@@ -7,4 +7,4 @@ call addCustomer(auctionID,'customerID', postDate, postTime, expireDate, expireT
 
 *******************************************************************************/
 
-call addPost(1,'Shiyong', DATE('1999-1-2'), TIME('00:11:12'), DATE('1999-2-2'), TIME('00:11:12'));
+#call addPost(1,'Shiyong', DATE('1999-1-2'), TIME('00:11:12'), DATE('1999-2-2'), TIME('00:11:12'));

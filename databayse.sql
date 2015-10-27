@@ -110,6 +110,7 @@ CREATE TABLE Bid (
 /*******************************************************************************
 Post: represents all auctions that have ended
 *******************************************************************************/
+/*
 CREATE TABLE Post (
   AuctionID INTEGER,
   CustomerID CHAR(32),
@@ -124,7 +125,7 @@ CREATE TABLE Post (
   FOREIGN KEY(CustomerID) REFERENCES Customer(CustomerID)
     ON DELETE NO ACTION
     ON UPDATE CASCADE);
-
+*/
 DELIMITER $$
 /*******************************************************************************
 ADDS A NEW CUSTOMER TO THE CUSTOMER TABLE
@@ -187,11 +188,20 @@ END IF;
 
 End $$
 
-CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
+CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2), IN increment DECIMAL(8,2))
 BEGIN
-insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment)
-  values(Lower(seller_id), item_id, employee_id, opening_bid, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, (opening_bid/8)
+
+DECLARE itemsInStock INTEGER;
+SELECT AmountInStock INTO itemsInStock
+FROM Item
+WHERE ItemID = item_id;
+IF itemsInStock > 0 THEN
+insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment, CurrentHighBid)
+  values(Lower(seller_id), item_id, employee_id, 0, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, increment, 0
     );
+ELSE
+  select "No items in stock";
+END IF;
 End $$
 
 CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
@@ -247,32 +257,38 @@ WHERE S.Type = I.Type AND S.CustomerID = customerID;
 End
 $$
 
-CREATE PROCEDURE addPost(IN auctionID INTEGER, IN customerID CHAR(32), IN postDate DATE, IN postTime Time, IN expireDate Date, IN expireTime Time)
-BEGIN
-insert into DATABAYSE.Post(AuctionID, CustomerID, PostDate, PostTime, ExpireDate, ExpireTime)
-  values(auctionID, customerID, postDate, postTime, expireDate, expireTime);
-  UPDATE Auction SET ClosingBid = 17.38 WHERE AuctionID = auctionID; #TODO remove this is just for testing revenues
-  UPDATE Auction SET isComplete = 1 WHERE AuctionID = auctionID; #TODO remove
-End
-$$
-
-
 CREATE PROCEDURE endAuction(IN auctionID INTEGER)
 BEGIN
-# SET AUCTION BOOLEAN TO TRUE
-# SET ClosingBid TODO: doesn't work yet
-/*
+
 UPDATE Auction
-SET isComplete = 1 AND ClosingBid = CurrentHighBid
-WHERE AuctionID = auctionID;*/
-/*
-UPDATE Item
-SET
-WHERE*/
-# SET ITEM COPIESSOLD ++
-# SET AMOUNTINSTOCK --
-# SET CUSTOMER ITEMS SOLD ++
-# SET CUSTOMER ITEMSPURCHAESED ++
+SET isComplete = 1 #AND ClosingBid = CurrentHighBid
+WHERE AuctionID = auctionID;
+
+UPDATE Item I, Auction A
+SET I.CopiesSold = I.CopiesSold + 1 #AND I.AmountInStock = I.AmountInStock - 1
+WHERE A.AuctionID = auctionID AND A.ItemID = I.ItemID;
+
+UPDATE Item I, Auction A
+SET I.AmountInStock = I.AmountInStock - 1
+WHERE A.AuctionID = auctionID AND A.ItemID = I.ItemID;
+
+
+UPDATE Item I, Auction A
+SET I.AmountInStock = I.AmountInStock - 1
+WHERE A.AuctionID = auctionID AND A.ItemID = I.ItemID;
+
+UPDATE Auction A
+SET A.ClosingBid = CurrentHighBid
+WHERE A.AuctionID = auctionID;
+
+UPDATE Customer C, Auction A
+SET C.ItemsSold = C.ItemsSold + 1
+Where C.CustomerID = A.SellerID;
+
+UPDATE Customer C, Auction A
+SET C.ItemsPurchased = C.ItemsPurchased + 1
+Where C.CustomerID = A.BuyerID;
+
 END $$
 
 # Selects the revenue from a particular item
@@ -309,10 +325,37 @@ END $$
 CREATE PROCEDURE addBid(IN auctID INTEGER, IN custID CHAR(32),
 IN newBid DECIMAL(8,2), IN newMaxBid DECIMAL(8,2))
 BEGIN
- #TODO: when an auction is over don't let someone bid
+ DECLARE auctionComplete INTEGER;
+ DECLARE currentBid DECIMAL(8,2);
+ DECLARE seller CHAR(32);
+
+ SELECT isComplete INTO auctionComplete
+ FROM Auction
+ WHERE AuctionID = auctID;
+
+ SELECT SellerID INTO seller
+ FROM Auction
+ WHERE AuctionID = auctID;
+
+ SELECT CurrentHighBid INTO currentBid
+ FROM Auction
+ WHERE AuctionID = auctID;
+
+IF auctionComplete = 0 AND newBid > currentBid AND custID LIKE seller = 0 THEN
   INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
     values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
 
+    UPDATE Auction
+    SET CurrentHighBid = newBid #AND ClosingBid = CurrentHighBid
+    WHERE AuctionID = auctionID;
+
+    UPDATE Auction
+    SET BuyerID = custID #AND ClosingBid = CurrentHighBid
+    WHERE AuctionID = auctionID;
+
+ELSE
+SELECT "Invalid Bid";
+END IF;
 END $$
 
 CREATE PROCEDURE getBidHistory(IN custID CHAR(32), IN auctID INTEGER)
@@ -360,19 +403,10 @@ BEGIN
   GROUP BY A.AuctionID;
 END $$
 
-/* TODO fix this
-CREATE TRIGGER check_Auction_Over BEFORE UPDATE ON Auction
-     FOR EACH ROW
-     BEGIN
-         IF TIMEDIFF(CURRENT_TIME, ClosingTime) >= 0 THEN# >= ClosingTime OR CURRENT_DATE >= ClosingDate THEN
-             call getRevenueByItem('test'); # END auctions
-         END IF;
-     END $$
-*/
-
 CREATE TRIGGER no_updates_on_complete_auction BEFORE UPDATE ON Auction
   FOR EACH ROW
   BEGIN
+
 
   END $$
 
@@ -422,7 +456,7 @@ CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) A
 /* Produce a list of sales by customer name */
 CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalClosingBids) AS
   SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
-  FROM Post P, Item I, Auction A, Customer C
+  FROM Item I, Auction A, Customer C
   #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
   #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
   GROUP BY C.CustomerID;
