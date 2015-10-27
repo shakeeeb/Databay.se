@@ -2,14 +2,14 @@
 
 #add employee-- we hired billiam longbottm
 call addEmployee('000-43-9987', 'Billiam', 'Longbottom',
-'yorkshire pudding', 'ayy lmao', 'HW', 11178, '(646)232-6765','2015-23-10',200);
+'yorkshire pudding', 'ayy lmao', 'HW', 11178, '(646)232-6765',DATE('2015-23-10'),200);
 
 #edit employee-- billiam longbottom moved
-call editEmployee(8, 'Billiam', 'Longbottom',
-'the shire', 'britannia', 'HW', 11179, '1-800-HOTLINEBLING','2015-23-10');
+call editEmployee('000-43-9987', 'Billiam', 'Longbottom',
+'the shire', 'britannia', 'HW', 11179, '1-800-HOTLINEBLING',DATE('2015-23-10'));
 
 #delete employee-- this deletes billiam longbottom
-call deleteEmployee(8);
+call deleteEmployee('000-43-9987');
 
 #Obtain a sales report for a particular month-- get the sales report for september
 call getMonthlySalesReport(10);

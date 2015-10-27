@@ -127,20 +127,7 @@ CREATE TABLE Post (
     ON UPDATE CASCADE);
 */
 DELIMITER $$
-/*******************************************************************************
-ADDS A NEW CUSTOMER TO THE CUSTOMER TABLE
-TODO: because customerID is based on the users first name if two users have
-the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
-*******************************************************************************/
-CREATE PROCEDURE addCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
-IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
-INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20))
-BEGIN
-insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
-  State, ZipCode, Telephone, Email, CreditCard)
-  values(Lower(cust_fn), cust_fn, cust_ln, cust_addr, cust_city , cust_state, cust_zip,
-    cust_tel, cust_email, cust_cc);
-End $$
+
 
 /*******************************************************************************
 THESE NEXT FEW PROCEDURES ARE FOR ADDING EDITING AND REMOVING EMPLOYEES.
@@ -158,20 +145,20 @@ insert into DATABAYSE.Employee(SSN, FirstName, LastName, Address, City,
 End $$
 
 # 3.1.a: Edit Employee
-CREATE PROCEDURE editEmployee(IN emplID INTEGER, IN empl_fn CHAR(32), IN empl_ln CHAR(32),
+CREATE PROCEDURE editEmployee(IN empl_ssn CHAR(14), IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
 INTEGER, IN empl_tel CHAR(20), IN empl_hr INTEGER)
 BEGIN
  UPDATE Employee
  SET FirstName = empl_fn, LastName = empl_ln, Address = empl_addr, City = empl_city,
  State = empl_state, ZipCode = empl_zip, Telephone = empl_tel, HourlyRate = empl_hr
- WHERE EmployeeID = emplID;
+ WHERE SSN = empl_ssn;
 End $$
 
 # 3.1.a: Delete Employee
-CREATE PROCEDURE deleteEmployee(In emplID INTEGER)
+CREATE PROCEDURE deleteEmployee(In empl_ssn CHAR(14))
 BEGIN
-  DELETE FROM Employee WHERE EmployeeID = emplID;
+  DELETE FROM Employee WHERE SSN = empl_ssn;
 End $$
 
 # 3.1.b: Get Monthly Sales Report
@@ -183,46 +170,31 @@ BEGIN
   GROUP BY I.Name, I.Type;
 End $$
 
-CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
+# 3.1.e Selects the revenue from a particular item
+CREATE PROCEDURE getRevenueByItem(IN itemName Char(20))
 BEGIN
-
-# THIS MAKES SURE THERE ARENT ANY DUPLICATES IN THE TABLE
-DECLARE itemCount INTEGER;
-SELECT COUNT(Name) INTO itemCount
-FROM Item
-WHERE itemName LIKE Name AND itemType LIKE Type AND itemYear = Year;
-
-IF itemCount = 0 THEN
-  insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
-  values(itemName, itemType, itemYear, itemAmountInStock);
-ELSE
-  UPDATE Item SET AmountInStock = AmountInStock + itemAmountInStock WHERE itemName LIKE Name;
-END IF;
-
+  SELECT SUM(A.ClosingBid)
+  FROM Auction A, Item I
+  WHERE I.Name = itemName AND I.ItemID = A.ItemID AND A.isComplete = 1;
 End $$
 
-CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER,
-IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2), IN inc DECIMAL(8,2), IN auctionLength INTEGER)
+# 3.1.e Selects the revenue from a particular type of item type
+CREATE PROCEDURE getRevenueByType(IN itemType Char(12))
 BEGIN
-DECLARE itemsInStock INTEGER;
-SELECT AmountInStock INTO itemsInStock
-FROM Item
-WHERE ItemID = item_id;
-
-IF itemsInStock > 0 THEN
-insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment, CurrentHighBid)
-  values(Lower(seller_id), item_id, employee_id, -1, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL auctionLength DAY), CURRENT_TIME, reserve, inc, -1
-);
-ELSE
-  select "No items in stock";
-END IF;
+  SELECT SUM(A.ClosingBid)
+  FROM Auction A, Item I
+  WHERE I.Type = itemType AND I.ItemID = A.ItemID AND A.isComplete = 1;
 End $$
 
-CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
+# 3.1.e Selects the revenue from a particular type of customer
+CREATE PROCEDURE getRevenueByCustomer(IN customerName Char(32))
 BEGIN
-UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
+  SELECT SUM(A.ClosingBid)
+  FROM Auction A, Customer C
+  WHERE C.CustomerID = customerName AND C.CustomerID = A.SellerID AND A.isComplete = 1;
 End $$
 
+/*3.1.f get the customer representative who generated the most revenue*/
 CREATE PROCEDURE getBestCustomerRep()
 BEGIN
 SELECT E.*
@@ -233,6 +205,7 @@ ORDER BY RV.Total DESC
 LIMIT 1;
 End $$
 
+/*3.1.g.1 the customer who generated the most revenue by buying things*/
 CREATE PROCEDURE getBestBuyer()
 BEGIN
 SELECT C.*
@@ -244,6 +217,7 @@ LIMIT 1;
 End
 $$
 
+/*3.1.g.2 the customer who generated the most revenue by selling things*/
 CREATE PROCEDURE getBestMerchant()
 BEGIN
 SELECT C.*
@@ -255,19 +229,12 @@ LIMIT 1;
 End
 $$
 
-# 3.2.d Produce a list of item suggestions for a given customer (based on that customer's past purchases)
-CREATE PROCEDURE getSuggestionsByType(IN customerID CHAR(32))
-BEGIN
-SELECT I.*
-FROM getTypesForSuggestion S, Item I
-WHERE S.Type = I.Type AND S.CustomerID = customerID;
-End
-$$
-
+/*3.2.a a customer representative should be able to record a sale*/
 CREATE PROCEDURE endAuction(IN auctID INTEGER)
 BEGIN
-DECLARE meetsReserve DECIMAL(8,2);
+
 DECLARE currentBid DECIMAL(8,2);
+DECLARE meetsReserve DECIMAL(8,2);
 
 SELECT Reserve INTO meetsReserve
 FROM Auction
@@ -278,9 +245,6 @@ FROM Auction
 WHERE AuctionID = auctID;
 
 IF currentBid >= meetsReserve THEN
-UPDATE Auction
-SET isComplete = 1 #AND ClosingBid = CurrentHighBid
-WHERE AuctionID = auctID;
 
 UPDATE Item I, Auction A
 SET I.CopiesSold = I.CopiesSold + 1 #AND I.AmountInStock = I.AmountInStock - 1
@@ -308,33 +272,148 @@ Where C.CustomerID = A.BuyerID;
 
 ELSE
 select "Reserve not met";
-
 END IF;
+
+UPDATE Auction
+SET isComplete = 1 #AND ClosingBid = CurrentHighBid
+WHERE AuctionID = auctID;
 
 END $$
 
-# 3.1.e Selects the revenue from a particular item
-CREATE PROCEDURE getRevenueByItem(IN itemName Char(20))
+/*******************************************************************************
+3.2.b.1 ADDS A NEW CUSTOMER TO THE CUSTOMER TABLE
+TODO: because customerID is based on the users first name if two users have
+the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
+*******************************************************************************/
+CREATE PROCEDURE addCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
+IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
+INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20))
 BEGIN
-  SELECT SUM(A.ClosingBid)
-  FROM Auction A, Item I
-  WHERE I.Name = itemName AND I.ItemID = A.ItemID AND A.isComplete = 1;
+insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
+  State, ZipCode, Telephone, Email, CreditCard)
+  values(Lower(cust_fn), cust_fn, cust_ln, cust_addr, cust_city , cust_state, cust_zip,
+    cust_tel, cust_email, cust_cc);
 End $$
 
-# 3.1.e Selects the revenue from a particular type of item type
-CREATE PROCEDURE getRevenueByType(IN itemType Char(12))
+/*******************************************************************************
+3.2.b.2 EDITS A CUSTOMER IN THE CUSTOMER TABLE
+TODO: because customerID is based on the users first name if two users have
+the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
+*******************************************************************************/
+CREATE PROCEDURE editCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
+IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
+INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20), IN cust_items INTEGER,
+IN cust_bought INTEGER, IN cust_rating INTEGER)
 BEGIN
-  SELECT SUM(A.ClosingBid)
-  FROM Auction A, Item I
-  WHERE I.Type = itemType AND I.ItemID = A.ItemID AND A.isComplete = 1;
+UPDATE Customer
+  SET CustomerID = Lower(cust_fn), FirstName = cust_fn, LastName = cust_ln, Address = cust_addr, City = cust_city,
+  State = cust_state, ZipCode = cust_zip, Telephone = cust_tel, Email = cust_email, CreditCard = cust_cc,
+  ItemsPurchased = cust_bought, ItemsSold = cust_items, Rating = cust_rating
+  WHERE CustomerID = cust_fn;
 End $$
 
-# 3.1.e Selects the revenue from a particular type of customer
-CREATE PROCEDURE getRevenueByCustomer(IN customerName Char(32))
+# 3.2.b.2: Delete Customer
+CREATE PROCEDURE deleteCustomer(In cust_fn CHAR(32))
 BEGIN
-  SELECT SUM(A.ClosingBid)
-  FROM Auction A, Customer C
-  WHERE C.CustomerID = customerName AND C.CustomerID = A.SellerID AND A.isComplete = 1;
+  DELETE FROM Customer WHERE CustomerID = cust_fn;
+End $$
+
+# 3.2.d + 3.3.g Produce a list of item suggestions for a given customer (based on that customer's past purchases)
+CREATE PROCEDURE getSuggestionsByType(IN customerID CHAR(32))
+BEGIN
+SELECT I.*
+FROM getTypesForSuggestion S, Item I
+WHERE S.Type = I.Type AND S.CustomerID = customerID;
+End
+$$
+
+# 3.3.a A bid history for each auction
+CREATE PROCEDURE getBidHistory(IN custID CHAR(32), IN auctID INTEGER)
+BEGIN
+#TODO are we supposed to show all bids or just bids from one customer
+  SELECT B.Bid, B.MaxBid, B.BidDate, B.BidTime
+  FROM Bid B
+  WHERE B.CustomerID = custID AND B.AuctionID = auctID;
+END $$
+
+#TODO CHECK THAT YOU ARE SELECTING ALL THE NECESSARY AUCTION DATA FOR THESE PROCEDURES
+# 3.3.b History of past auctions a customer has taken part in
+CREATE PROCEDURE getPastAuctions(IN custID CHAR(32))
+BEGIN
+#TODO are we supposed to include being a seller as participant
+  SELECT I.Name, A.AuctionID, A.isComplete
+  FROM Bid B, Auction A, Item I
+  Where (B.CustomerID = custID AND B.AuctionID = A.AuctionID) OR A.SellerID = custID
+  AND A.ItemID = I.ItemID
+  GROUP BY A.AuctionID;
+END $$
+
+# 3.3.c Items sold by a given seller and corresponding auction info
+CREATE PROCEDURE itemsSoldBy(IN custID CHAR(32))
+BEGIN
+  SELECT I.Name, A.AuctionID, A.isComplete
+  FROM  Auction A, Item I
+  Where A.SellerID = custID AND A.ItemID = I.ItemID
+  GROUP BY A.AuctionID;
+END $$
+
+# 3.3.d Items avaliable of a particular type and corresponding auction info
+CREATE PROCEDURE itemsAvailableByType(IN itemType CHAR(32))
+BEGIN
+  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
+  A.ClosingDate, A.ClosingTime
+  FROM  Auction A, Item I
+  Where I.Type = itemType AND A.ItemID = I.ItemID AND A.isComplete = 0
+  GROUP BY A.AuctionID;
+END $$
+
+# 3.3.e Items avaliable with a particular keyword or set of keywords in the item name, and cooresponding auction info
+CREATE PROCEDURE itemsAvailableByKeyword(IN itemName CHAR(32))
+BEGIN
+  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
+  A.ClosingDate, A.ClosingTime
+  FROM  Auction A, Item I
+  Where INSTR(I.Name, itemName) > 0 AND I.ItemID AND A.isComplete = 0 #INSTR() returns the number of characters that match between two strings
+  GROUP BY A.AuctionID;
+END $$
+
+CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
+BEGIN
+# THIS MAKES SURE THERE ARENT ANY DUPLICATES IN THE TABLE
+DECLARE itemCount INTEGER;
+SELECT COUNT(Name) INTO itemCount
+FROM Item
+WHERE itemName LIKE Name AND itemType LIKE Type AND itemYear = Year;
+
+IF itemCount = 0 THEN
+  insert into DATABAYSE.Item(Name, Type, Year, AmountInStock)
+  values(itemName, itemType, itemYear, itemAmountInStock);
+ELSE
+  UPDATE Item SET AmountInStock = AmountInStock + itemAmountInStock WHERE itemName LIKE Name;
+END IF;
+End $$
+
+CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER,
+IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2), IN inc DECIMAL(8,2), IN auctionLength INTEGER)
+BEGIN
+DECLARE itemsInStock INTEGER;
+SELECT AmountInStock INTO itemsInStock
+FROM Item
+WHERE ItemID = item_id;
+
+IF itemsInStock > 0 THEN
+insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment, CurrentHighBid)
+  values(Lower(seller_id), item_id, employee_id, -1, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL auctionLength DAY), CURRENT_TIME, reserve, inc, -1
+);
+ELSE
+  select "No items in stock";
+END IF;
+End $$
+
+
+CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
+BEGIN
+UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
 End $$
 
 CREATE PROCEDURE getRepSales(IN empl_id INTEGER)
@@ -405,56 +484,6 @@ ELSE
 END IF;
 END $$
 
-# 3.3.a A bid history for each auction
-CREATE PROCEDURE getBidHistory(IN custID CHAR(32), IN auctID INTEGER)
-BEGIN
-#TODO are we supposed to show all bids or just bids from one customer
-  SELECT B.Bid, B.MaxBid, B.BidDate, B.BidTime
-  FROM Bid B
-  WHERE B.CustomerID = custID AND B.AuctionID = auctID;
-END $$
-
-#TODO CHECK THAT YOU ARE SELECTING ALL THE NECESSARY AUCTION DATA FOR THESE PROCEDURES
-# 3.3.b History of past auctions a customer has taken part in
-CREATE PROCEDURE getPastAuctions(IN custID CHAR(32))
-BEGIN
-#TODO are we supposed to include being a seller as participant
-  SELECT I.Name, A.AuctionID, A.isComplete
-  FROM Bid B, Auction A, Item I
-  Where (B.CustomerID = custID AND B.AuctionID = A.AuctionID) OR A.SellerID = custID
-  AND A.ItemID = I.ItemID
-  GROUP BY A.AuctionID;
-END $$
-
-# 3.3.c Items sold by a given seller and corresponding auction info
-CREATE PROCEDURE itemsSoldBy(IN custID CHAR(32))
-BEGIN
-  SELECT I.Name, A.AuctionID, A.isComplete
-  FROM  Auction A, Item I
-  Where A.SellerID = custID AND A.ItemID = I.ItemID
-  GROUP BY A.AuctionID;
-END $$
-
-# 3.3.d Items avaliable of a particular type and corresponding auction info
-CREATE PROCEDURE itemsAvailableByType(IN itemType CHAR(32))
-BEGIN
-  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
-  A.ClosingDate, A.ClosingTime
-  FROM  Auction A, Item I
-  Where I.Type = itemType AND A.ItemID = I.ItemID AND A.isComplete = 0
-  GROUP BY A.AuctionID;
-END $$
-
-# 3.3.e Items avaliable with a particular keyword or set of keywords in the item name, and cooresponding auction info
-CREATE PROCEDURE itemsAvailableByKeyword(IN itemName CHAR(32))
-BEGIN
-  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
-  A.ClosingDate, A.ClosingTime
-  FROM  Auction A, Item I
-  Where INSTR(I.Name, itemName) > 0 AND I.ItemID AND A.isComplete = 0 #INSTR() returns the number of characters that match between two strings
-  GROUP BY A.AuctionID;
-END $$
-
 DELIMITER ;
 
 /* Produce a comprehensive listing of all items  */
@@ -465,7 +494,37 @@ CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock)
   FROM Item I
   GROUP BY Name, Type, Year;
 
-#
+/*3.1.d Produce a list of sales by item name */
+CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) AS
+  SELECT I.Name, SUM(I.CopiesSold), SUM(A.ClosingBid)
+  FROM Item I, Auction A
+  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
+  GROUP BY I.Name;
+
+/*3.1.d Produce a list of sales by customer name */
+CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalClosingBids) AS
+  SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
+  FROM Item I, Auction A, Customer C
+  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
+  #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
+  GROUP BY C.CustomerID;
+
+CREATE VIEW DATABAYSE.itemsSold(Name, Type, Year, CopiesSold) AS
+  SELECT I.Name, I.Type, I.Year, SUM(I.CopiesSold)
+  FROM Item I
+  GROUP BY I.Name, I.Type;
+
+/*3.1.h + 3.3.f Produce a best seller list of items*/
+CREATE VIEW DATABAYSE.bestSellersList(Name, Type, Year, CopiesSold) AS
+  SELECT *
+  FROM itemsSold
+  ORDER BY CopiesSold DESC LIMIT 10; # DESC: descending order
+
+#3.3.c Produce a mailing list of customers
+CREATE VIEW DATABAYSE.customerMailingList(LastName, FirstName, Address, City, State, ZipCode) AS
+  SELECT C.LastName, C.FirstName, C.Address, C.City, C.State, C.ZipCode
+  FROM Customer C;
+
 /*produce a list of employees by total revenue*/
   CREATE VIEW DATABAYSE.employeeRevenue(ID, Total) AS
   SELECT E.EmployeeID, SUM(A.ClosingBid)
@@ -495,32 +554,3 @@ CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock)
   FROM Customer C, Item I, Auction A
   WHERE A.BuyerID = C.CustomerID AND A.ItemID = I.ItemID
   GROUP BY I.Type;
-/* Produce a list of sales by item name */
-CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) AS
-  SELECT I.Name, SUM(I.CopiesSold), SUM(A.ClosingBid)
-  FROM Item I, Auction A
-  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
-  GROUP BY I.Name;
-
-/* Produce a list of sales by customer name */
-CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalClosingBids) AS
-  SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
-  FROM Item I, Auction A, Customer C
-  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
-  #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
-  GROUP BY C.CustomerID;
-
-# Produce a mailing list of customers
-CREATE VIEW DATABAYSE.customerMailingList(LastName, FirstName, Address, City, State, ZipCode) AS
-  SELECT C.LastName, C.FirstName, C.Address, C.City, C.State, C.ZipCode
-  FROM Customer C;
-
-CREATE VIEW DATABAYSE.itemsSold(Name, Type, Year, CopiesSold) AS
-  SELECT I.Name, I.Type, I.Year, SUM(I.CopiesSold)
-  FROM Item I
-  GROUP BY I.Name, I.Type;
-
-CREATE VIEW DATABAYSE.bestSellersList(Name, Type, Year, CopiesSold) AS
-  SELECT *
-  FROM itemsSold
-  ORDER BY CopiesSold DESC LIMIT 10; # DESC: descending order
