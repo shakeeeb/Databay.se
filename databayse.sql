@@ -86,7 +86,7 @@ CREATE TABLE Auction (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION, # only one seller
   FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
-    ON DELETE SET NULL); #TODO check if this is OK
+    ON DELETE NO ACTION); #TODO check if this is OK
 
 /*******************************************************************************
 Bid: represents an auction bid
@@ -201,17 +201,18 @@ END IF;
 
 End $$
 
-CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER, IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2), IN increment DECIMAL(8,2))
+CREATE PROCEDURE addAuction(IN seller_id CHAR(32), IN item_id INTEGER, IN employee_id INTEGER,
+IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2), IN inc DECIMAL(8,2), IN auctionLength INTEGER)
 BEGIN
-
 DECLARE itemsInStock INTEGER;
 SELECT AmountInStock INTO itemsInStock
 FROM Item
 WHERE ItemID = item_id;
+
 IF itemsInStock > 0 THEN
 insert into DATABAYSE.Auction(SellerID, ItemID, EmployeeID, OpeningBid, OpeningDate, OpeningTime, ClosingDate, ClosingTime, Reserve, Increment, CurrentHighBid)
-  values(Lower(seller_id), item_id, employee_id, 0, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL 3 DAY), CURRENT_TIME, reserve, increment, 0
-    );
+  values(Lower(seller_id), item_id, employee_id, -1, CURRENT_DATE(), CURRENT_TIME() , DATE_ADD(CURRENT_DATE(), INTERVAL auctionLength DAY), CURRENT_TIME, reserve, inc, -1
+);
 ELSE
   select "No items in stock";
 END IF;
@@ -221,8 +222,6 @@ CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
 BEGIN
 UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
 End $$
-
-
 
 CREATE PROCEDURE getBestCustomerRep()
 BEGIN
@@ -265,29 +264,40 @@ WHERE S.Type = I.Type AND S.CustomerID = customerID;
 End
 $$
 
-CREATE PROCEDURE endAuction(IN auctionID INTEGER)
+CREATE PROCEDURE endAuction(IN auctID INTEGER)
 BEGIN
 
+DECLARE meetsReserve DECIMAL(8,2);
+DECLARE currentBid DECIMAL(8,2);
+
+SELECT Reserve INTO meetsReserve
+FROM Auction
+WHERE AuctionID = auctID;
+
+SELECT CurrentHighBid INTO currentBid
+FROM Auction
+WHERE AuctionID = auctID;
+
+IF currentBid >= meetsReserve THEN
 UPDATE Auction
 SET isComplete = 1 #AND ClosingBid = CurrentHighBid
-WHERE AuctionID = auctionID;
+WHERE AuctionID = auctID;
 
 UPDATE Item I, Auction A
 SET I.CopiesSold = I.CopiesSold + 1 #AND I.AmountInStock = I.AmountInStock - 1
-WHERE A.AuctionID = auctionID AND A.ItemID = I.ItemID;
+WHERE A.AuctionID = auctID AND A.ItemID = I.ItemID;
 
 UPDATE Item I, Auction A
 SET I.AmountInStock = I.AmountInStock - 1
-WHERE A.AuctionID = auctionID AND A.ItemID = I.ItemID;
-
+WHERE A.AuctionID = auctID AND A.ItemID = I.ItemID;
 
 UPDATE Item I, Auction A
 SET I.AmountInStock = I.AmountInStock - 1
-WHERE A.AuctionID = auctionID AND A.ItemID = I.ItemID;
+WHERE A.AuctionID = auctID AND A.ItemID = I.ItemID;
 
 UPDATE Auction A
 SET A.ClosingBid = CurrentHighBid
-WHERE A.AuctionID = auctionID;
+WHERE A.AuctionID = auctID;
 
 UPDATE Customer C, Auction A
 SET C.ItemsSold = C.ItemsSold + 1
@@ -296,6 +306,10 @@ Where C.CustomerID = A.SellerID;
 UPDATE Customer C, Auction A
 SET C.ItemsPurchased = C.ItemsPurchased + 1
 Where C.CustomerID = A.BuyerID;
+
+ELSE
+select "Reserve not met";
+END IF;
 
 END $$
 
@@ -336,6 +350,8 @@ BEGIN
  DECLARE auctionComplete INTEGER;
  DECLARE currentBid DECIMAL(8,2);
  DECLARE seller CHAR(32);
+ DECLARE openingBid CHAR(32);
+ DECLARE bidWithIncrement DECIMAL(8,2);
 
  SELECT isComplete INTO auctionComplete
  FROM Auction
@@ -345,24 +361,47 @@ BEGIN
  FROM Auction
  WHERE AuctionID = auctID;
 
+ SELECT CurrentHighBid + Increment INTO bidWithIncrement
+ FROM Auction
+ WHERE AuctionID = auctID;
+
  SELECT CurrentHighBid INTO currentBid
  FROM Auction
  WHERE AuctionID = auctID;
 
-IF auctionComplete = 0 AND newBid > currentBid AND custID LIKE seller = 0 THEN
-  INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
-    values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
+ SELECT OpeningBid INTO openingBid
+ FROM Auction
+ WHERE AuctionID = auctID;
 
-    UPDATE Auction
-    SET CurrentHighBid = newBid #AND ClosingBid = CurrentHighBid
-    WHERE AuctionID = auctionID;
+ IF auctionComplete = 0 AND currentBid < 0 THEN
 
-    UPDATE Auction
-    SET BuyerID = custID #AND ClosingBid = CurrentHighBid
-    WHERE AuctionID = auctionID;
+ INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
+   values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
+
+ UPDATE Auction
+ SET CurrentHighBid = newBid #AND ClosingBid = CurrentHighBid
+ WHERE AuctionID = auctID;
+
+ UPDATE Auction
+ SET OpeningBid = newBid #AND ClosingBid = CurrentHighBid
+ WHERE AuctionID = auctID;
 
 ELSE
-SELECT seller, newBid, currentBid;
+  IF auctionComplete = 0 AND newBid >= bidWithIncrement AND custID LIKE seller = 0 THEN
+    INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
+      values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
+
+      UPDATE Auction
+      SET CurrentHighBid = newBid #AND ClosingBid = CurrentHighBid
+      WHERE AuctionID = auctID;
+
+      UPDATE Auction
+      SET BuyerID = custID #AND ClosingBid = CurrentHighBid
+      WHERE AuctionID = auctID;
+
+  ELSE
+  SELECT seller, newBid, currentBid;
+  END IF;
 END IF;
 END $$
 
@@ -426,7 +465,7 @@ CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock)
   FROM Item I
   GROUP BY Name, Type, Year;
 
-# 
+#
 /*produce a list of employees by total revenue*/
   CREATE VIEW DATABAYSE.employeeRevenue(ID, Total) AS
   SELECT E.EmployeeID, SUM(A.ClosingBid)
