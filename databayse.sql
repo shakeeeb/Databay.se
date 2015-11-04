@@ -250,9 +250,6 @@ UPDATE Item I, Auction A
 SET I.CopiesSold = I.CopiesSold + 1 #AND I.AmountInStock = I.AmountInStock - 1
 WHERE A.AuctionID = auctID AND A.ItemID = I.ItemID;
 
-UPDATE Item I, Auction A
-SET I.AmountInStock = I.AmountInStock - 1
-WHERE A.AuctionID = auctID AND A.ItemID = I.ItemID;
 
 UPDATE Item I, Auction A
 SET I.AmountInStock = I.AmountInStock - 1
@@ -328,12 +325,12 @@ End
 $$
 
 # 3.3.a A bid history for each auction
-CREATE PROCEDURE getBidHistory(IN custID CHAR(32), IN auctID INTEGER)
+CREATE PROCEDURE getBidHistory(IN auctID INTEGER)
 BEGIN
 #TODO are we supposed to show all bids or just bids from one customer
-  SELECT B.Bid, B.MaxBid, B.BidDate, B.BidTime
+  SELECT B.Bid, B.MaxBid, B.CustomerID, B.BidDate, B.BidTime
   FROM Bid B
-  WHERE B.CustomerID = custID AND B.AuctionID = auctID;
+  WHERE B.AuctionID = auctID;
 END $$
 
 #TODO CHECK THAT YOU ARE SELECTING ALL THE NECESSARY AUCTION DATA FOR THESE PROCEDURES
@@ -414,6 +411,11 @@ End $$
 CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
 BEGIN
 UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
+End $$
+
+CREATE PROCEDURE demoteManager(IN empl_SSN CHAR(14))
+BEGIN
+UPDATE Employee SET isManager = 0 WHERE SSN = empl_SSN;
 End $$
 
 CREATE PROCEDURE getRepSales(IN empl_id INTEGER)
@@ -498,15 +500,14 @@ CREATE VIEW DATABAYSE.viewAllItems (Name, Type, Year, CopiesSold, AmountInStock)
 CREATE VIEW DATABAYSE.salesByItemName(Name, TotalCopiesSold, TotalClosingBids) AS
   SELECT I.Name, SUM(I.CopiesSold), SUM(A.ClosingBid)
   FROM Item I, Auction A
-  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
+  WHERE A.ItemId = I.ItemId AND A.isComplete = 1
   GROUP BY I.Name;
 
 /*3.1.d Produce a list of sales by customer name */
 CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalClosingBids) AS
   SELECT C.CustomerID, SUM(I.CopiesSold), SUM(A.ClosingBid)
   FROM Item I, Auction A, Customer C
-  #WHERE A.ItemId = I.ItemId AND P.AuctionID = A.AuctionID
-  #LOOK OVER HERE. WE NEED TO MODIFY THIS LOGIC.
+  WHERE A.ItemId = I.ItemId AND  A.isComplete = 1 AND A.SellerID = C.CustomerID
   GROUP BY C.CustomerID;
 
 CREATE VIEW DATABAYSE.itemsSold(Name, Type, Year, CopiesSold) AS
@@ -526,10 +527,10 @@ CREATE VIEW DATABAYSE.customerMailingList(LastName, FirstName, Address, City, St
   FROM Customer C;
 
 /*produce a list of employees by total revenue*/
-  CREATE VIEW DATABAYSE.employeeRevenue(ID, Total) AS
-  SELECT E.EmployeeID, SUM(A.ClosingBid)
-  FROM Auction A, Employee E
-  WHERE A.EmployeeID = E.EmployeeID AND A.isComplete = 1
+  CREATE VIEW DATABAYSE.employeeRevenue(ID, ItemName, AuctionID, ClosingDate, ClosingTime,Total) AS
+  SELECT E.EmployeeID, I.Name,A.AuctionID, A.ClosingDate, A.ClosingTime, SUM(A.ClosingBid)
+  FROM Auction A, Employee E, Item I
+  WHERE A.EmployeeID = E.EmployeeID AND A.ItemID = I.ItemID AND A.isComplete = 1
   GROUP BY E.EmployeeID;
 
 #
