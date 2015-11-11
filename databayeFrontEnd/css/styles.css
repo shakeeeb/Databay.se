@@ -9,11 +9,13 @@
 }
 
 .footer {
-	  border: none;
+  border: none;
   background-color: #F9EFCC;
   opacity: .96;
 }
 
 .form-large{
-  font-size: 2em;
+  font-size: 1.75em;
+  padding-bottom: .5em;
 }
+
