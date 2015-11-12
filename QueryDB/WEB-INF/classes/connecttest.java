@@ -1,24 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package java4databayse;
-
-/**
- *
- * @author Terrell Mack, Shakeeb Saleh, Miu ki Yip
- */
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class Java4Databayse {
+public class connecttest {
 
     public static void main(String[] args) {
-            
+
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -27,10 +15,10 @@ public class Java4Databayse {
         Class.forName("com.mysql.jdbc.Driver");//.newInstance();
         conn = DriverManager.getConnection("jdbc:mysql://localhost/DATABAYSE","root","1");
         stmt = conn.createStatement();
-       
+
         String query = "Select * from Employee";
         ResultSet res = stmt.executeQuery(query);
-        
+
         while(res.next()){
          //Retrieve by column name
          int id  = res.getInt("EmployeeID");
@@ -42,16 +30,14 @@ public class Java4Databayse {
          System.out.print(" FirstName: " + firstName);
          System.out.print(" LastName: " + lastName);
          System.out.println();
-      
+
       }
-           
+
         } catch (Exception e) {
-            
+
             System.out.println("It didn't work :D\n" + e);
         }
     }
-    
-    
+
+
     }
-
-
