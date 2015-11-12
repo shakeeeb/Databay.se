@@ -18,7 +18,12 @@ import java.sql.Statement;
 public class Java4Databayse {
 
     public static void main(String[] args) {
+<<<<<<< HEAD
             
+=======
+           
+        
+>>>>>>> 611e271e9249f3a6e2421327f2b39e950d792192
         Connection conn = null;
         Statement stmt = null;
         try {
