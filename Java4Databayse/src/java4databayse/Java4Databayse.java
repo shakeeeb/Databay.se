@@ -10,20 +10,20 @@ package java4databayse;
  * @author Terrell Mack, Shakeeb Saleh, Miu ki Yip
  */
 
-//package dbconnection;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
-
-//STEP 1. Import required packages
 
 public class Java4Databayse {
 
     public static void main(String[] args) {
+<<<<<<< HEAD
+            
+=======
            
         
+>>>>>>> 611e271e9249f3a6e2421327f2b39e950d792192
         Connection conn = null;
         Statement stmt = null;
         try {
@@ -52,7 +52,7 @@ public class Java4Databayse {
            
         } catch (Exception e) {
             
-            System.out.println("It didn't work :D" + e);
+            System.out.println("It didn't work :D\n" + e);
         }
     }
     
