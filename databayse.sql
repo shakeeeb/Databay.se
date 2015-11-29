@@ -36,6 +36,7 @@ CREATE TABLE Customer (
   ItemsSold INTEGER DEFAULT 0,
   ItemsPurchased INTEGER DEFAULT 0,
   Rating INTEGER DEFAULT 1,
+  Password CHAR(32),
   PRIMARY KEY(CustomerID));
 
 /*******************************************************************************
@@ -54,6 +55,7 @@ CREATE TABLE Employee (
   StartDate DATE,
   HourlyRate INTEGER NOT NULL,
   IsManager TINYINT(1) DEFAULT 0,
+  Password Char(32),
   PRIMARY KEY(EmployeeID));
 
 /*******************************************************************************
@@ -74,7 +76,7 @@ CREATE TABLE Auction (
   ClosingTime TIME,
   Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
   Increment DECIMAL(8,2), # The lowest amount a bid can increase
-  isComplete TINYINT(1) DEFAULT 0,
+  isComplete TINYINT(1) DEFAULT -1, #-1 for unnapproved, 0 for active, 1 for complete
   PRIMARY KEY(AuctionID),
   FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
     ON DELETE NO ACTION
@@ -86,7 +88,7 @@ CREATE TABLE Auction (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION, # only one seller
   FOREIGN KEY(EmployeeID) REFERENCES Employee(EmployeeID)
-    ON DELETE NO ACTION); #TODO check if this is OK
+    ON DELETE NO ACTION);
 
 /*******************************************************************************
 Bid: represents an auction bid
@@ -107,62 +109,41 @@ CREATE TABLE Bid (
     ON DELETE NO ACTION
     ON UPDATE CASCADE);
 
-/*******************************************************************************
-Post: represents all auctions that have ended
-*******************************************************************************/
-/*
-CREATE TABLE Post (
-  AuctionID INTEGER,
-  CustomerID CHAR(32),
-  PostDate DATE,
-  PostTime TIME,
-  ExpireDate DATE,
-  ExpireTime TIME,
-  PRIMARY KEY(AuctionID, CustomerID),
-  FOREIGN KEY(AuctionID) REFERENCES Auction(AuctionID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE,
-  FOREIGN KEY(CustomerID) REFERENCES Customer(CustomerID)
-    ON DELETE NO ACTION
-    ON UPDATE CASCADE);
-*/
 DELIMITER $$
-
-
 /*******************************************************************************
 THESE NEXT FEW PROCEDURES ARE FOR ADDING EDITING AND REMOVING EMPLOYEES.
 *******************************************************************************/
-
 # 3.1.a: Add Employee
 CREATE PROCEDURE addEmployee(IN empl_ssn CHAR(14), IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
-INTEGER, IN empl_tel CHAR(20), IN empl_sd DATE, IN empl_hr INTEGER)
+INTEGER, IN empl_tel CHAR(20), IN empl_sd DATE, IN empl_hr INTEGER, IN empl_pass CHAR(32))
 BEGIN
 insert into DATABAYSE.Employee(SSN, FirstName, LastName, Address, City,
-  State, ZipCode, Telephone, StartDate, HourlyRate)
+  State, ZipCode, Telephone, StartDate, HourlyRate, Password)
   values(empl_ssn, empl_fn, empl_ln, empl_addr, empl_city , empl_state, empl_zip,
-    empl_tel,empl_sd,empl_hr);
+    empl_tel,empl_sd,empl_hr, empl_pass);
 End $$
 
 # 3.1.a: Edit Employee
 CREATE PROCEDURE editEmployee(IN empl_ssn CHAR(14), IN empl_fn CHAR(32), IN empl_ln CHAR(32),
 IN empl_addr CHAR(128), IN empl_city CHAR(32), IN empl_state CHAR(2), IN empl_zip
-INTEGER, IN empl_tel CHAR(20), IN empl_hr INTEGER)
+INTEGER, IN empl_tel CHAR(20), IN empl_hr INTEGER, IN empl_pass CHAR(32))
 BEGIN
  UPDATE Employee
  SET FirstName = empl_fn, LastName = empl_ln, Address = empl_addr, City = empl_city,
- State = empl_state, ZipCode = empl_zip, Telephone = empl_tel, HourlyRate = empl_hr
+ State = empl_state, ZipCode = empl_zip, Telephone = empl_tel, HourlyRate = empl_hr,
+ Password = empl_pass
  WHERE SSN = empl_ssn;
 End $$
 
 # 3.1.a: Delete Employee
-CREATE PROCEDURE deleteEmployee(In empl_ssn CHAR(14))
+CREATE PROCEDURE deleteEmployee(IN empl_ssn CHAR(14))
 BEGIN
   DELETE FROM Employee WHERE SSN = empl_ssn;
 End $$
 
 # 3.1.b: Get Monthly Sales Report
-CREATE PROCEDURE getMonthlySalesReport(in Month INTEGER)
+CREATE PROCEDURE getMonthlySalesReport(IN Month INTEGER)
 BEGIN
   SELECT I.Name, SUM(A.ClosingBid)
   FROM Item I, Auction A
@@ -202,6 +183,17 @@ FROM employeeRevenue RV
   JOIN Employee E
   ON E.EmployeeID = RV.ID
 ORDER BY RV.Total DESC
+LIMIT 1;
+End $$
+
+/*3.1.f get the customer representative who generated the most revenue*/
+CREATE PROCEDURE getLowestCustomerRep()
+BEGIN
+SELECT E.*
+FROM employeeRevenue RV
+  JOIN Employee E
+  ON E.EmployeeID = RV.ID
+ORDER BY RV.Total
 LIMIT 1;
 End $$
 
@@ -284,12 +276,12 @@ the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
 *******************************************************************************/
 CREATE PROCEDURE addCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
 IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
-INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20))
+INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20), IN cust_pass CHAR(32))
 BEGIN
 insert into DATABAYSE.Customer(CustomerID, FirstName, LastName, Address, City,
-  State, ZipCode, Telephone, Email, CreditCard)
-  values(Lower(cust_fn), cust_fn, cust_ln, cust_addr, cust_city , cust_state, cust_zip,
-    cust_tel, cust_email, cust_cc);
+  State, ZipCode, Telephone, Email, CreditCard, Password)
+  values(Lower(cust_fn), cust_fn, cust_ln, cust_addr, cust_city, cust_state, cust_zip,
+    cust_tel, cust_email, cust_cc, cust_pass);
 End $$
 
 /*******************************************************************************
@@ -300,12 +292,12 @@ the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
 CREATE PROCEDURE editCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
 IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
 INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20), IN cust_items INTEGER,
-IN cust_bought INTEGER, IN cust_rating INTEGER)
+IN cust_bought INTEGER, IN cust_rating INTEGER, IN cust_pass CHAR(32))
 BEGIN
 UPDATE Customer
   SET CustomerID = Lower(cust_fn), FirstName = cust_fn, LastName = cust_ln, Address = cust_addr, City = cust_city,
   State = cust_state, ZipCode = cust_zip, Telephone = cust_tel, Email = cust_email, CreditCard = cust_cc,
-  ItemsPurchased = cust_bought, ItemsSold = cust_items, Rating = cust_rating
+  ItemsPurchased = cust_bought, ItemsSold = cust_items, Rating = cust_rating, Passord = cust_pass
   WHERE CustomerID = cust_fn;
 End $$
 
@@ -350,14 +342,14 @@ CREATE PROCEDURE itemsSoldBy(IN custID CHAR(32))
 BEGIN
   SELECT I.Name, A.AuctionID, A.isComplete
   FROM  Auction A, Item I
-  Where A.SellerID = custID AND A.ItemID = I.ItemID
+  Where A.SellerID = custID AND A.ItemID = I.ItemID AND A.isComplete = 1
   GROUP BY A.AuctionID;
 END $$
 
 # 3.3.d Items avaliable of a particular type and corresponding auction info
 CREATE PROCEDURE itemsAvailableByType(IN itemType CHAR(32))
 BEGIN
-  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
+  SELECT I.Name, A.CurrentHighBid, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
   A.ClosingDate, A.ClosingTime
   FROM  Auction A, Item I
   Where I.Type = itemType AND A.ItemID = I.ItemID AND A.isComplete = 0
@@ -373,6 +365,14 @@ BEGIN
   Where INSTR(I.Name, itemName) > 0 AND I.ItemID AND A.isComplete = 0 #INSTR() returns the number of characters that match between two strings
   GROUP BY A.AuctionID;
 END $$
+
+CREATE PROCEDURE getItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER)
+BEGIN
+  SELECT I.*
+  FROM  Item I
+  Where I.Name LIKE itemName AND I.Type LIKE itemType AND I.Year = itemYear;
+END $$
+
 
 CREATE PROCEDURE addItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER, IN itemAmountInStock INTEGER)
 BEGIN
@@ -407,6 +407,18 @@ ELSE
 END IF;
 End $$
 
+
+CREATE PROCEDURE getUnnapprovedAuctions(IN empl_id INTEGER)
+BEGIN
+SELECT A.*
+FROM Auction A
+WHERE A.isComplete = -1 AND A.EmployeeID = empl_id;
+End $$
+
+CREATE PROCEDURE approveAuction(IN auct_id INTEGER)
+BEGIN
+UPDATE AUCTION SET isComplete = 0 where AuctionID = auct_id;
+END $$
 
 CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
 BEGIN
@@ -456,7 +468,7 @@ BEGIN
 
  IF auctionComplete = 0 AND currentBid < 0 THEN
 
- INSERT INTO  DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
+ INSERT INTO DATABAYSE.Bid(AuctionID, CustomerID, Bid, MaxBid, BidDate, BidTime)
    values(auctID, custID, newBid, newMaxBid, CURRENT_DATE(), CURRENT_TIME());
 
  UPDATE Auction

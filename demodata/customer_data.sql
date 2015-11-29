@@ -6,25 +6,25 @@ zip, 'telephone', 'email','creditcard');
 *******************************************************************************/
 
 call addCustomer('Shiyong','Lu', '123 Success Street', 'Stony Brook', 'NY',
-11790, '(516)632-8959', 'shiyong@cs.sunysb.edu','1234-5678-1234-5678');
+11790, '(516)632-8959', 'shiyong@cs.sunysb.edu','1234-5678-1234-5678', 'password');
 
 call addCustomer('Haixia','Du', '456 Fortune Road', 'Stony Brook', 'NY',
-11790, '(516)632-4360', 'dhaixia@cs.sunysb.edu','5678-1234-5678-1234');
+11790, '(516)632-4360', 'dhaixia@cs.sunysb.edu','5678-1234-5678-1234','password');
 
 call addCustomer('John','Smith', '789 Peace Blvd', 'Los Angeles', 'CA',
-12345, '(412)443-4321', 'shlu@ic.sunysb.edu','2345-6789-2345-6789');
+12345, '(412)443-4321', 'shlu@ic.sunysb.edu','2345-6789-2345-6789','password');
 
 call addCustomer('Phil','Lewis', '135 Knowledge Lane', 'Stony Brook', 'NY',
-11790, '(516)666-8888', 'pml@cs.sunysb.edu','6789-2345-6789-2345');
+11790, '(516)666-8888', 'pml@cs.sunysb.edu','6789-2345-6789-2345','password');
 
 call addCustomer('oscar','grouch', 'trashcan', 'sesame st', 'OH',
-12345, '(646)646-6446', 'trashcan@sesamest.com','0000-0000-0000-0000');
+12345, '(646)646-6446', 'trashcan@sesamest.com','0000-0000-0000-0000','password');
 
 call addCustomer('bob','square', 'pineapple', 'under the sea', 'FL',
-99999, '(999)999-0000', 'bubble@kusty.krab','1111-1111-1111-1111');
+99999, '(999)999-0000', 'bubble@kusty.krab','1111-1111-1111-1111','password');
 
 call addCustomer('tom','riddle', 'a cave', 'twin city', 'MN',
-66666, '(666)666-0666', 'tom@hogwarts.edu','6666-6666-6666-6666');
+66666, '(666)666-0666', 'tom@hogwarts.edu','6666-6666-6666-6666','password');
 
 /*
 call addCustomer('jennifer','wong', 'multiplexorland', 'CC', 'Alive',
