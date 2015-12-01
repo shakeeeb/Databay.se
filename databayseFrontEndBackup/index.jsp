@@ -9,7 +9,13 @@
   <title>databayse</title>
 
   <script language="javascript" type="text/javascript">
-      window.location = "./index.jsp"
+
+  function SearchButton_onclick() {
+
+    if(document.getElementById("search-input").value != "") {
+        document.getElementById("search-form").submit();
+    }
+  }
   </script>
 </head>
 
@@ -27,16 +33,61 @@
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 
     <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+
+
+            <div class="navbar-header">
+              <a class="navbar-brand" href="index.jsp">databayse logo</a>
 
 
 
-      <ul class="nav navbar-nav">
-      <li><a></a></li>
-        <li><a href="signup.html">sign up</a></li>
-        <li><a href="login.html">log in</a></li>
-        <li><a href="/logout.jsp">log out</a></li>
+            <ul class="nav navbar-nav">
+            <li><a></a></li>
+
+      <%
+          String mysURL = "jdbc:mysql://localhost/DATABAYSE";
+          String mysUserID = "root";
+          String mysPassword = "1";
+          String mysJDBCDriver = "com.mysql.jdbc.Driver";
+
+          String custID = "" + session.getValue("login");
+        	java.sql.Connection conn=null;
+      			try
+      			{
+                Class.forName(mysJDBCDriver).newInstance();
+          			java.util.Properties sysprops=System.getProperties();
+          			sysprops.put("user",mysUserID);
+          			sysprops.put("password",mysPassword);
+
+      				  //connect to the database
+                conn=java.sql.DriverManager.getConnection(mysURL,sysprops);
+                System.out.println("Connected successfully to database using JConnect");
+
+
+                java.sql.Statement stmt1=conn.createStatement();
+      					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Customer Where CustomerID = '" + custID + "'");
+                if(rs.next()){
+                  out.print("<li><a href=\"customerHome.jsp\">My Account</a></li>");
+                  out.print("<li><a href=\"logout.jsp\">log out</a></li>");
+                }
+                else {
+                  rs = stmt1.executeQuery("Select * from Employee Where EmployeeID = '" + custID + "'");
+                  if(rs.next()) {
+                    out.print("<li><a href=\"employeeHome.jsp\">Dashboard</a></li>");
+                    out.print("<li><a href=\"logout.jsp\">log out</a></li>");
+                  }
+                  else {
+                    out.print("<li><a href=\"signup.html\">sign up</a></li>");
+                    out.print("<li><a href=\"login.html\">log in</a></li>");
+                  }
+
+                }
+              } catch(Exception e) {
+                  out.print("Error: " + e);
+                } finally {
+            				try{conn.close();}catch(Exception ee){};
+            		}
+          %>
+
       </ul>
 
       </div><!-- navbar-header -->
@@ -46,7 +97,7 @@
 
         <div class="col-lg-offset-6 input-group col-lg-6">
           <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
-          <span id="SearchButton" class="input-group-addon" type="submit" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
+          <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
         </div>
 
         </div>

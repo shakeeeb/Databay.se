@@ -22,45 +22,43 @@
 
 <body>
 
-  <nav class="navbar navbar1 navbar" role="navigation">
 
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
-      </div><!-- navbar-header -->
-    </div><!-- container -->
-  </nav>
+    <nav class="navbar navbar1 navbar" role="navigation">
 
-  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.jsp">databayse logo</a>
+        </div><!-- navbar-header -->
+      </div><!-- container -->
+    </nav>
 
-    <div class="container">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
 
-      <ul class="nav navbar-nav">
-      <li><a></a></li>
-        <li><a href="signup.html">sign up</a></li>
-        <li><a href="login.html">log in</a></li>
-        <li><a href="/logout.jsp">log out</a></li>
-      </ul>
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="index.jsp">databayse logo</a>
 
-      </div><!-- navbar-header -->
+        <ul class="nav navbar-nav">
+        <li><a></a></li>
+          <li><a href="logout.jsp">log out</a></li>
+        </ul>
 
-      <form name="search-form" id="search-form" action="itemsearch.jsp" method="post" role="form">
-        <div class="container navtop-margin">
+        </div><!-- navbar-header -->
 
-        <div class="col-lg-offset-6 input-group col-lg-6">
-          <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
-          <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
-          <input id="SearchButton" class="btn btn-default" type="button" value="Search"  onclick="return SearchButton_onclick()">
-        </div>
+        <form name="search-form" id="search-form" action="itemsearch.jsp" method="post" role="form">
+          <div class="container navtop-margin">
 
-        </div>
-      </form>
+            <div class="col-lg-offset-6 input-group col-lg-6">
+              <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
+              <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
+            </div>
 
-    </div> <!-- container -->
+          </div>
+        </form>
 
-  </nav>
+      </div> <!-- container -->
+
+    </nav>
 
   <div class="content container"><!-- content container -->
 
@@ -104,7 +102,8 @@
             out.print("<br>");
 
             out.print("<form name=\"approve-auction-form\" id=\"signup-form\" action=\"approveAuction.jsp\" method=\"post\" role=\"form\">");
-            out.println("<table border=\"1\" style=\"width:100%\">");
+            out.println("<table  class=\"table table-striped\
+            " border=\"1\" style=\"width:100%\">");
             out.print("<tr>");
             out.print("<th>Approve</th>");
             out.print("<th>ItemID</th>");

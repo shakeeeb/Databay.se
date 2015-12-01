@@ -77,6 +77,7 @@ CREATE TABLE Auction (
   Reserve DECIMAL(8,2), # The lowest amount a seller will accept for an item
   Increment DECIMAL(8,2), # The lowest amount a bid can increase
   isComplete TINYINT(1) DEFAULT -1, #-1 for unnapproved, 0 for active, 1 for complete
+  ImagePath CHAR(64) DEFAULT 'default.jpg',
   PRIMARY KEY(AuctionID),
   FOREIGN KEY(ItemID) REFERENCES Item(ItemID)
     ON DELETE NO ACTION
@@ -379,11 +380,11 @@ END $$
 # 3.3.e Items avaliable with a particular keyword or set of keywords in the item name, and cooresponding auction info
 CREATE PROCEDURE itemsAvailableByKeyword(IN itemName CHAR(32))
 BEGIN
-  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
+  SELECT I.Name, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime, A.imagePath,
   A.ClosingDate, A.ClosingTime
   FROM  Auction A, Item I
-  Where INSTR(I.Name, itemName) > 0 AND I.ItemID AND A.isComplete = 0 #INSTR() returns the number of characters that match between two strings
-  GROUP BY A.AuctionID;
+  Where INSTR(I.Name, itemName) > 0 AND I.ItemID = A.ItemID AND A.isComplete = 0; #INSTR() returns the number of characters that match between two strings
+  #GROUP BY A.AuctionID;
 END $$
 
 CREATE PROCEDURE getItem(IN itemName CHAR(20), IN itemType CHAR(12), IN itemYear INTEGER)
@@ -427,6 +428,11 @@ ELSE
 END IF;
 End $$
 
+CREATE PROCEDURE setAuctionImage(IN auct_id INTEGER, IN auct_imagepath CHAR(64))
+BEGIN
+UPDATE Auction SET ImagePath = auct_imagepath where AuctionID = auct_id;
+END $$
+
 
 CREATE PROCEDURE getUnnapprovedAuctions(IN empl_id INTEGER)
 BEGIN
@@ -437,7 +443,7 @@ End $$
 
 CREATE PROCEDURE approveAuction(IN auct_id INTEGER)
 BEGIN
-UPDATE AUCTION SET isComplete = 0 where AuctionID = auct_id;
+UPDATE Auction SET isComplete = 0 where AuctionID = auct_id;
 END $$
 
 CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))

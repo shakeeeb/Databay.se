@@ -12,13 +12,6 @@
 
 function CreateAccountButton_onclick() {
 
-  function SearchButton_onclick() {
-
-    if(document.getElementById("search-input").value != "") {
-        document.getElementById("search-form").submit();
-    }
-  }
-
   if(document.getElementById("first-name-input").value == "")
 		alert("Please fill in your first name");
   else {
@@ -26,8 +19,6 @@ function CreateAccountButton_onclick() {
   }
 
 }
-
-
 </script>
 
 </head>
@@ -49,6 +40,16 @@ function CreateAccountButton_onclick() {
         <a class="navbar-brand" href="index.jsp">databayse logo</a>
 
 
+      <ul class="nav navbar-nav">
+        <li><a></a></li>
+        <li><a href="form.html">sign up</a></li>
+        <li><a href="login.html">log in</a></li>
+        <li><a href="#logout">log out</a></li>
+      </ul>
+
+
+
+
       </div><!-- navbar-header -->
 
       <div class="container navtop-margin">
@@ -56,8 +57,7 @@ function CreateAccountButton_onclick() {
 
       <div class="col-lg-offset-6 input-group col-lg-6">
         <input type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
-        <!-- <span id="basic-addon2" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span> -->
-           <span class="btn btn-default input-group-addon" id="basic-addon2" onclick="return SearchButton_onclick()">Search!</span>
+        <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span>
       </div>
 
 
@@ -70,6 +70,18 @@ function CreateAccountButton_onclick() {
 
 <div class="content container"><!-- content container -->
 
+<div class="row">
+<div class="container">
+  <div class="btn-group btn-group-justified" role="group" aria-label="...">
+  <a href="button" class="btn btn-default">Car</a>
+  <a href="button" class="btn btn-default">Clothing</a>
+  <a href="button" class="btn btn-default">Toys</a>
+  <a href="button" class="btn btn-default">Electronics</a>
+  <a href="button" class="btn btn-default">Grocery</a>
+  <a href="button" class="btn btn-default">Other</a>
+</div> <!-- button div -->
+</div> <!-- container div -->
+</div> <!-- row div -->
 
   <div class="row">
     <section class="col-sm-12">
@@ -100,13 +112,13 @@ function CreateAccountButton_onclick() {
   </div>
 
   <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-    <label for="phone-label">Phone</label>
-    <input name="phone-input" id="phone-input" type="text" class="form-control col-lg-offset-1" placeholder="123-456-7890">
+    <label for="address-label">Street Address</label>
+    <input name="address-input" id="address-input" type="text" class="form-control col-lg-offset-1" placeholder="Address">
   </div>
 
   <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-    <label for="address-label">Street Address</label>
-    <input name="address-input" id="address-input" type="text" class="form-control col-lg-offset-1" placeholder="Address">
+    <label for="phone-label">Phone #</label>
+    <input name="phone-input" id="phone-input" type="number" class="form-control col-lg-offset-1" placeholder"123-45-6789">
   </div>
 
   <div class ="form-group col-lg-6 form-large col-lg-offset-2">
@@ -130,7 +142,7 @@ function CreateAccountButton_onclick() {
   </div>
 
   <div class="form-group col-lg-1 form-large col-lg-offset-7">
-      <input id="CreateAccountButton" type="submit" class="btn btn-primary" value="Create Account" onclick="return CreateAccountButton_onclick()" >
+      <input id="CreateAccountButton" type="button" class="btn btn-primary" value="Create Account" onclick="return CreateAccountButton_onclick()" >
   </div>
 
 </form> <!--form-->

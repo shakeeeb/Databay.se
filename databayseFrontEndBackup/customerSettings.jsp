@@ -35,7 +35,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+        <a class="navbar-brand" href="index.html">databayse logo</a>
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
@@ -70,7 +70,7 @@
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
 
-    String emplID = "" + session.getValue("login");
+    String custID = "" + session.getValue("login");
   	java.sql.Connection conn=null;
 			try
 			{
@@ -83,98 +83,77 @@
           conn=java.sql.DriverManager.getConnection(mysURL,sysprops);
           System.out.println("Connected successfully to database using JConnect");
 
-          // employee info
+          // customer info
           java.sql.Statement stmt1=conn.createStatement();
-					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Employee Where EmployeeID = '" + emplID + "'");
+					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Customer Where CustomerID = '" + custID + "'");
+
+            while(rs.next()){
+              String fn = rs.getString("FirstName");
+              String ln = rs.getString("LastName");
+              out.print(" FirstName: " + fn);
+              out.print(" LastName: " + ln);
+              out.print("<br>");
+            }
+
+            // customer suggestions
+            stmt1=conn.createStatement();
+            rs = stmt1.executeQuery("call getSuggestionsByType('" + custID + "')");
+
+            out.print("<br>");
+                  out.print("<br>");
+            out.print("Sugestions");
+            out.print("<br>");
+
+              while(rs.next()) {
+                String itemName = rs.getString("Name");
+                String type = rs.getString("Type");
+                out.print("Item: " + itemName);
+                out.print("Type: " + type);
+                out.print("<br>");
+              }
+
+            // items sold by customer
+            out.print("<br>");
+            out.print("<br>");
+            out.print("Items Sold");
+            out.print("<br>");
 
 
-          // approve auctions
-          out.print("<br>");
-          out.print("<label for=\"approved-auctions-label\">Approved Auctions</label>");
-          out.print("<br>");
-            if(rs.next()){
-              java.util.Enumeration en = request.getParameterNames();
-              //java.util.ArrayList<String> params = new java.util.ArrayList<String>();
-                 while (en.hasMoreElements()) {
 
-                  String auctID = (String)en.nextElement();
-                  stmt1=conn.createStatement();
-                  rs = stmt1.executeQuery("call approveAuction(" +auctID + ")");
-                  out.println(auctID);
-                  out.println("<br");
+            stmt1=conn.createStatement();
+            rs = stmt1.executeQuery("call itemsSoldBy('" + custID + "')");
 
-                    // params.add(param);
-                 }
+              while(rs.next()){
+                String itemName = rs.getString("Name");
+                String isComplete = rs.getString("isComplete");
+                out.print("Item: " + itemName);
+                out.print("Active: " + isComplete);
+                out.print("<br>");
+              }
 
-               }
+
+            // get past auction
+            out.print("<br>");
+                  out.print("<br>");
+                out.print("Past Auctions");
+                        out.print("<br>");
+
+             stmt1=conn.createStatement();
+             rs = stmt1.executeQuery("call getPastAuctions('" + custID + "')");
+
+              while(rs.next()){
+                String itemName = rs.getString("Name");
+                String isComplete = rs.getString("isComplete");
+                out.print("Item: " + itemName);
+                out.print("Active: " + isComplete);
+                out.print("<br>");
+              }
+
+
+
+
 
         } catch(Exception e) {
           out.println("Error: " + e);
         }
-
 %>
-
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-
-</div><!-- content container -->
-
-
-<script src="js/jquery-2.1.4.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/script.js"></script>
-</body>
-</html>

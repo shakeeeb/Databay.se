@@ -7,20 +7,6 @@
   <link rel="stylesheet" href="css/bootstrap.min.css">
   <link rel="stylesheet" href="css/styles.css">
   <title>databayse</title>
-  <script language="javascript" type="text/javascript">
-
-  function loginButton_onclick() {
-
-//    if(document.getElementById("first-name-input").value == "")
-  //		alert("Please fill in your first name");
-  //  else {
-    //  document.getElementById("signup-form").submit();
-    //}
-
-    document.getElementById("login-form").submit();
-  }
-
-</script>
 </head>
 <body>
 
@@ -39,6 +25,13 @@
       <div class="navbar-header">
         <a class="navbar-brand" href="index.jsp">databayse logo</a>
 
+
+      <ul class="nav navbar-nav">
+        <li><a></a></li>
+        <li><a href="form.html">sign up</a></li>
+        <li><a href="login.html">log in</a></li>
+        <li><a href="#logout">log out</a></li>
+      </ul>
 
 
 
@@ -63,14 +56,27 @@
 
 <div class="content container"><!-- content container -->
 
-
+<div class="row">
+<div class="container">
+  <div class="btn-group btn-group-justified" role="group" aria-label="...">
+  <a href="button" class="btn btn-default">Car</a>
+  <a href="button" class="btn btn-default">Clothing</a>
+  <a href="button" class="btn btn-default">Toys</a>
+  <a href="button" class="btn btn-default">Electronics</a>
+  <a href="button" class="btn btn-default">Grocery</a>
+  <a href="button" class="btn btn-default">Other</a>
+</div> <!-- button div -->
+</div> <!-- container div -->
+</div> <!-- row div -->
 
   <div class="row">
     <section class="col-sm-12">
-      <h2>Log in to your account</h2>
+      <h2>Suggested Items</h2>
     </section>
   </div>
 
+
+
   <br>
   <br>
   <br>
@@ -79,33 +85,6 @@
   <br>
   <br>
   <br>
-  <br>
-
-<form name="login-form" id="login-form" action="login.jsp" method="post" role="form">
-
-  <div class ="form-group col-lg-6 form-large col-lg-offset-2 ">
-    <label for="userName">Username</label>
-    <input name="username-input" type="userName" class="form-control col-lg-offset-1" id="FN" placeholder="User Name">
-  </div> <!--form group-->
-
-  <div class ="form-group col-lg-6 form-large col-lg-offset-2 ">
-    <label for="pwd">Password</label>
-    <input name="password-input" type="password" class="form-control col-lg-offset-1" id="pwd" placeholder="Password">
-  </div> <!--form group-->
-
-  <div class="form-group form-group col-lg-1 form-large col-lg-offset-7">
-      <input type="submit" class="btn btn-primary" value="Login" onclick="return loginButton_onclick()">
-      
-  </div><!--form group-->
-
-  <div class="form-group col-lg-1 form-large col-lg-offset-7">
-  <a href="signup.html" class="btn btn-default">Sign up</a>
-  </div>
-
-</form> <!--form-->
-
-
-
   <br>
   <br>
   <br>

@@ -19,7 +19,7 @@
 
             			java.sql.Statement stmt1=conn.createStatement();
 
-                  out.println("Item: "+request.getParameter("search-input"));
+                  out.println(request.getParameter("search-input"));
 
                   String query = "call itemsAvailableByKeyword('"+request.getParameter("search-input")+"')";
 
@@ -30,9 +30,8 @@
           int count = 0;
           while(res.next()){
            //Retrieve by column name
-           int id  = res.getInt("AuctionID");
+           //int id  = res.getInt("ItemID");
            String name = res.getString("Name");
-           String imagePath = res.getString("ImagePath");
            String sellerID = res.getString("SellerID");
 
 
@@ -40,13 +39,9 @@
            out.println("<p>" +  name
                 + "," + sellerID + "</p>");
                 count++;
-          out.print("<img src=images\\"+imagePath+" alt=\":D\" style=\"width:128px;height:128px;\">");
            }
-
-
-           //<img src="wrongname.gif" alt="HTML5 Icon" style="width:128px;height:128px;">
         out.println("<p> " + count + " items found </p>");
-
+        out.println("</body></html>");
 
         } catch(Exception e) {
           out.println("Error: " + e);

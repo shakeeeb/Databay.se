@@ -9,8 +9,6 @@ String reserve = request.getParameter("reserve-input");
 String openingBid = "0";
 String auctionLength = request.getParameter("auct-length-input");
 
-
-
     String mysURL = "jdbc:mysql://localhost/DATABAYSE";
     String mysUserID = "root";
     String mysPassword = "1";
@@ -32,20 +30,6 @@ String auctionLength = request.getParameter("auct-length-input");
 
           java.sql.Statement stmt1=conn.createStatement();
 					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Customer Where CustomerID = '" + custID + "'");
-
-          if(rs.next()){
-            java.util.Enumeration en = request.getParameterNames();
-            //java.util.ArrayList<String> params = new java.util.ArrayList<String>();
-               while (en.hasMoreElements()) {
-
-                String param = (String)en.nextElement();
-                out.println(param);
-                out.println(request.getParameter(param));
-              
-                  // params.add(param);
-                }
-
-             }
 
           // customer info
             while(rs.next()){

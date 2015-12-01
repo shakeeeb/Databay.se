@@ -16,12 +16,9 @@
         document.getElementById("search-form").submit();
     }
   }
-
-  function CreateAccountButton_onclick() {
-
-  }
   </script>
 </head>
+
 
 <body>
 
@@ -29,7 +26,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+        <a class="navbar-brand" href="index.html">databayse logo</a>
       </div><!-- navbar-header -->
     </div><!-- container -->
   </nav>
@@ -42,7 +39,9 @@
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
-        <li><a href="logout.jsp">log out</a></li>
+        <li><a href="signup.html">sign up</a></li>
+        <li><a href="login.html">log in</a></li>
+        <li><a href="/logout.jsp">log out</a></li>
       </ul>
 
       </div><!-- navbar-header -->
@@ -50,10 +49,11 @@
       <form name="search-form" id="search-form" action="itemsearch.jsp" method="post" role="form">
         <div class="container navtop-margin">
 
-          <div class="col-lg-offset-6 input-group col-lg-6">
-            <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
-            <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
-          </div>
+        <div class="col-lg-offset-6 input-group col-lg-6">
+          <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
+          <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
+          <input id="SearchButton" class="btn btn-default" type="button" value="Search"  onclick="return SearchButton_onclick()">
+        </div>
 
         </div>
       </form>
@@ -70,7 +70,7 @@
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
 
-    String custID = "" + session.getValue("login");
+    String emplID = "" + session.getValue("login");
   	java.sql.Connection conn=null;
 			try
 			{
@@ -83,85 +83,60 @@
           conn=java.sql.DriverManager.getConnection(mysURL,sysprops);
           System.out.println("Connected successfully to database using JConnect");
 
-          // customer info
+          // employee info
           java.sql.Statement stmt1=conn.createStatement();
-					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Customer Where CustomerID = '" + custID + "'");
-          if(rs.next()){
-            String fn = rs.getString("FirstName");
-            String ln = rs.getString("LastName");
-            out.print("<br>");
-            out.print("<h2>" + fn + " " + ln + "'s Homepage</h2>");
-            out.print("<br>");
-          }
+					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Employee Where EmployeeID = '" + emplID + "'");
 
-          // customer suggestions
-          out.print("<br>");
-          out.print("<label for=\"customer-suggestions-label\">Check out these Auctions</label>");
-          out.print("<br>");
-
-          rs = stmt1.executeQuery("call getSuggestionsByType('" + custID + "')");
-          out.print("<table class=\"table table-striped\" >");
-          out.print("<tr>");
-          out.print("<th>Name</th>");
-          out.print("<th>Type</th>");
-          out.print("</tr>");
-            boolean hasSuggestions = false;
-              while(rs.next()) {
-                String itemName = rs.getString("Name");
-                String type = rs.getString("Type");
-                out.print("<tr>");
-                out.print("<td>" + itemName + "</td>");
-                out.print("<td>" + type + "</td>");
-                out.print("</tr>");
-                hasSuggestions = true;
+            if(rs.next()){
+              String fn = rs.getString("FirstName");
+              String ln = rs.getString("LastName");
+              out.print("<br>");
+              out.print("<label for=\"unnaproved-auctions-label\">Employee: " + fn + " " + ln + "</label>");
+              out.print("<br>");
             }
 
-            // if the customer doesn't have suggestions show the best sellers list
-            if(hasSuggestions == false) {
-              rs = stmt1.executeQuery("Select * from bestSellersList");
+            // unnapproved auctions
+            stmt1=conn.createStatement();
+            rs = stmt1.executeQuery("call getUnnapprovedAuctions(" + emplID + ")");
+
+            out.print("<br>");
+            out.print("<label for=\"unnaproved-auctions-label\">Unnaproved Auctions</label>");
+            out.print("<br>");
+
+            out.print("<form name=\"approve-auction-form\" id=\"signup-form\" action=\"approveAuction.jsp\" method=\"post\" role=\"form\">");
+            out.println("<table border=\"1\" style=\"width:100%\">");
+            out.print("<tr>");
+            out.print("<th>Approve</th>");
+            out.print("<th>ItemID</th>");
+            out.print("<th>SellerID</th>");
+            out.print("</tr>");
               while(rs.next()) {
-                String itemName = rs.getString("Name");
-                String type = rs.getString("Type");
                 out.print("<tr>");
+                String auctionID = rs.getString("AuctionID");
+                String itemName = rs.getString("ItemID");
+                String sellerID = rs.getString("SellerID");
+                out.print("<td><input type=\"checkbox\" name=\""+auctionID+"\"></td>");
                 out.print("<td>" + itemName + "</td>");
-                out.print("<td>" + type + "</td>");
+                out.print("<td>" + sellerID + "</td>");
                 out.print("</tr>");
               }
-            }
-            out.println("</table>");
+              out.println("</table>");
+              out.println("<input type=\"submit\" value=\"Approve\">");
+              out.print("</form>");
 
-            // Unnaproved Auctions
+
+              /*
+
+            // items sold by customer
             out.print("<br>");
-            out.print("<label for=\"unnaproved-auctions-label\">Upcoming Auctions</label>");
             out.print("<br>");
+            out.print("Items Sold");
+            out.print("<br>");
+
+
 
             stmt1=conn.createStatement();
-            rs = stmt1.executeQuery("call getUpcomingAuctions('" + custID + "')");
-
-            boolean hasUnnapprovedAuctions = false;
-            while(rs.next()){
-                String itemName = rs.getString("Name");
-                String isComplete = rs.getString("isComplete");
-                out.print("Item: " + itemName);
-                out.print("Active: " + isComplete);
-                out.print("<br>");
-                hasUnnapprovedAuctions = true;
-              }
-
-              if(hasUnnapprovedAuctions == false) {
-                // Unnaproved Auctions
-                out.print("<label for=\"unnaproved-auctions-label\">No Upcoming Auctions!</label>");
-                out.print("<br>");
-              }
-
-            // get past auction
-            out.print("<br>");
-            out.print("<br>");
-            out.print("Past Auctions");
-            out.print("<br>");
-
-             stmt1=conn.createStatement();
-             rs = stmt1.executeQuery("call getPastAuctions('" + custID + "')");
+            rs = stmt1.executeQuery("call itemsSoldBy('" + emplID + "')");
 
               while(rs.next()){
                 String itemName = rs.getString("Name");
@@ -172,15 +147,31 @@
               }
 
 
+            // get past auction
+            out.print("<br>");
+                  out.print("<br>");
+                out.print("Past Auctions");
+                        out.print("<br>");
+
+             stmt1=conn.createStatement();
+             rs = stmt1.executeQuery("call getPastAuctions('" + emplID + "')");
+
+              while(rs.next()){
+                String itemName = rs.getString("Name");
+                String isComplete = rs.getString("isComplete");
+                out.print("Item: " + itemName);
+                out.print("Active: " + isComplete);
+                out.print("<br>");
+              }
 
 
-// EDIT CUSTOMER
+*/
+
 
         } catch(Exception e) {
           out.println("Error: " + e);
         }
 %>
-  <a href="createAuction.html" class="btn btn-default">Create Auction</a>
 
 
   <br>
@@ -238,8 +229,6 @@
   <br>
   <br>
   <br>
-
-
 
 </div><!-- content container -->
 

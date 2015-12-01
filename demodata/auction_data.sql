@@ -6,11 +6,14 @@ IN opening_bid DECIMAL(8,2), IN reserve DECIMAL(8,2))
 #<<<<<< HEAD
 #<<<<<<< HEAD
 call addAuction('Phil', 1, 1, 5, 10, 1, 3);
+call setAuctionImage(1,'titanicdvd.jpg');
 call approveAuction(1);
 
 #=======
 call addAuction('John', 2, 1, 50.0, 55.0, 1, 3);
+call setAuctionImage(2,'nissansentra.jpg');
 call approveAuction(2);
+
 
 #>>>>>>> d3e6ee905dbddf23b687f8d1edbf546202b7cc05
 #call addAuction('Haixia', 1, 1, 50.0, 55.0); #TODO remove

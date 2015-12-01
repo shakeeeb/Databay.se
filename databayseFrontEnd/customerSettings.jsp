@@ -35,7 +35,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
@@ -49,11 +49,13 @@
       <form name="search-form" id="search-form" action="itemsearch.jsp" method="post" role="form">
         <div class="container navtop-margin">
 
+
         <div class="col-lg-offset-6 input-group col-lg-6">
           <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
           <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
-          <input id="SearchButton" class="btn btn-default" type="button" value="Search"  onclick="return SearchButton_onclick()">
+<span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
         </div>
+
 
         </div>
       </form>

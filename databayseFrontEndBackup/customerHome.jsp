@@ -23,6 +23,7 @@
   </script>
 </head>
 
+
 <body>
 
   <nav class="navbar navbar1 navbar" role="navigation">
@@ -90,7 +91,7 @@
             String fn = rs.getString("FirstName");
             String ln = rs.getString("LastName");
             out.print("<br>");
-            out.print("<h2>" + fn + " " + ln + "'s Homepage</h2>");
+            out.print("<label for=\"unnaproved-auctions-label\">" + fn + " " + ln + "'s Homepage</label>");
             out.print("<br>");
           }
 
@@ -100,7 +101,7 @@
           out.print("<br>");
 
           rs = stmt1.executeQuery("call getSuggestionsByType('" + custID + "')");
-          out.print("<table class=\"table table-striped\" >");
+          out.println("<table border=\"1\" style=\"width:100%\">");
           out.print("<tr>");
           out.print("<th>Name</th>");
           out.print("<th>Type</th>");
@@ -238,8 +239,6 @@
   <br>
   <br>
   <br>
-
-
 
 </div><!-- content container -->
 
