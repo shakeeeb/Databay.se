@@ -437,17 +437,17 @@ End $$
 
 CREATE PROCEDURE approveAuction(IN auct_id INTEGER)
 BEGIN
-UPDATE AUCTION SET isComplete = 0 where AuctionID = auct_id;
+UPDATE Auction SET isComplete = 0 where AuctionID = auct_id;
 END $$
 
-CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
+CREATE PROCEDURE promoteToManager(IN employee_id INTEGER)
 BEGIN
-UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
+UPDATE Employee SET isManager = 1 WHERE EmployeeID = employee_id;
 End $$
 
-CREATE PROCEDURE demoteManager(IN empl_SSN CHAR(14))
+CREATE PROCEDURE demoteManager(IN employee_id INTEGER)
 BEGIN
-UPDATE Employee SET isManager = 0 WHERE SSN = empl_SSN;
+UPDATE Employee SET isManager = 0 WHERE EmployeeID = employee_id;
 End $$
 
 CREATE PROCEDURE getRepSales(IN empl_id INTEGER)
