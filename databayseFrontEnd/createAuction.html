@@ -29,7 +29,7 @@ else {
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
       </div><!-- navbar-header -->
     </div><!-- container -->
   </nav>
@@ -38,13 +38,12 @@ else {
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
 
 
       <ul class="nav navbar-nav">
         <li><a></a></li>
-        <li><a href="form.html">sign up</a></li>
-        <li><a href="login.html">log in</a></li>
+        <li><a href="customerHome.jsp">My Account</a></li>
         <li><a href="#logout">log out</a></li>
       </ul>
 
@@ -71,19 +70,6 @@ else {
 
 <div class="content container"><!-- content container -->
 
-<div class="row">
-<div class="container">
-  <div class="btn-group btn-group-justified" role="group" aria-label="...">
-  <a href="button" class="btn btn-default">Car</a>
-  <a href="button" class="btn btn-default">Clothing</a>
-  <a href="button" class="btn btn-default">Toys</a>
-  <a href="button" class="btn btn-default">Electronics</a>
-  <a href="button" class="btn btn-default">Grocery</a>
-  <a href="button" class="btn btn-default">Other</a>
-</div> <!-- button div -->
-</div> <!-- container div -->
-</div> <!-- row div -->
-
   <div class="row">
     <section class="col-sm-12">
       <h2> Auction Info </h2>
@@ -93,7 +79,7 @@ else {
 <form name="create-auction-form" id="create-auction-form" action="createAuction.jsp" method="post" role="form">
 
   <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-    <label for="name-label">Name</label>
+    <label for="name-label">Item Name</label>
     <input name="item-name-input" id="item-name-input" type="text" class="form-control col-lg-offset-1" placeholder="Item Name">
   </div>
 
@@ -120,6 +106,12 @@ else {
   <div class="form-group col-lg-1 form-large col-lg-offset-7">
       <input id="CreateAuctionButton" type="button" class="btn btn-primary" value="Create Auction" onclick="return CreateAuctionButton_onclick()" >
   </div>
+
+  <div class="form-group col-lg-1 form-large col-lg-offset-7">
+  <a href="customerHome.jsp" class="btn btn-default">Back</a>
+  </div>
+
+
 
 </form> <!--form-->
 

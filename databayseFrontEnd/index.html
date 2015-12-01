@@ -9,19 +9,9 @@
   <title>databayse</title>
 
   <script language="javascript" type="text/javascript">
-
-  function SearchButton_onclick() {
-
-    if(document.getElementById("search-input").value != "") {
-        document.getElementById("search-form").submit();
-    }
-  }
+      window.location = "./index.jsp"
   </script>
 </head>
-
-
-
-
 
 <body>
 
@@ -29,7 +19,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
       </div><!-- navbar-header -->
     </div><!-- container -->
   </nav>
@@ -38,7 +28,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
 
 
 
@@ -56,8 +46,7 @@
 
         <div class="col-lg-offset-6 input-group col-lg-6">
           <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
-          <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
-          <input id="SearchButton" class="btn btn-default" type="button" value="Search"  onclick="return SearchButton_onclick()">
+          <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
         </div>
 
         </div>
@@ -137,14 +126,11 @@
 
 </div><!-- row -->
 
-
   <div class="row">
     <section class="col-sm-12">
       <h2>Best Selling Items</h2>
     </section>
   </div>
-
-
 
   </div>
 
@@ -155,7 +141,6 @@
 
   <a href="itemAuction.html"> <img src="images/pikachu.png" alt="Exotic Pets Photo" height="250" width="250"> </a>
 
-
   <img src="images/bulbasaur.png" alt="Exotic Pets Photo" height="250" width="250">
 
 <img src="images/charmander.png" alt="Exotic Pets Photo" height="250" width="250">
@@ -164,10 +149,6 @@
 
   </div><!-- images -->
 </center>
-
-
-
-
 
 
   <br>

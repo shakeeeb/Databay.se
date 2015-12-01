@@ -26,7 +26,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
       </div><!-- navbar-header -->
     </div><!-- container -->
   </nav>

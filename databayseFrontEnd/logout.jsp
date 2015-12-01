@@ -1,5 +1,4 @@
 <%
- //request.getSession().invalidate();
- //response.sendRedirect(login.html);
- //session.getValue("login");
+session.invalidate();
+response.sendRedirect("index.jsp");
 %>

@@ -32,7 +32,9 @@
         + "','" + email + "','" + ccard + "','" + password +  "')";
         // HERE IS THE ACTUAL CALL TO THE DATABASE
         stmt.executeQuery(query);
-
+        session.putValue("login",firstName);
+        response.sendRedirect("customerHome.jsp");
+/*
         // THIS IS JUST TO CHECK IF THE NEW CUSTOMER WAS ADDED. (REMOVE LATER)
   			java.sql.ResultSet res = stmt.executeQuery("Select * from Customer");
           while(res.next()){
@@ -41,7 +43,7 @@
             out.print(" FirstName: " + fn);
             out.print(" LastName: " + ln);
             out.print("<br>");
-          }
+          }*/
         } catch (Exception e) { // IF SOMETHING GOES WRONG TOMCAT SHOULD GIVE YOU AN ERROR SCREEN
           out.println("Something went wrong: " + e);
         } finally {

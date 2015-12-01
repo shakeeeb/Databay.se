@@ -337,6 +337,26 @@ BEGIN
   GROUP BY A.AuctionID;
 END $$
 
+# Auctions that need to be approved
+CREATE PROCEDURE getUpcomingAuctions(IN custID CHAR(32))
+BEGIN
+#TODO are we supposed to include being a seller as participant
+  SELECT A.*
+  FROM Auction A
+  Where A.SellerID = custID AND A.isComplete = -1
+  GROUP BY A.AuctionID;
+END $$
+
+# Auctions that are currently running
+CREATE PROCEDURE getOpenAuctions(IN custID CHAR(32))
+BEGIN
+#TODO are we supposed to include being a seller as participant
+  SELECT A.*
+  FROM Auction A
+  Where A.SellerID = custID AND A.isComplete = 0
+  GROUP BY A.AuctionID;
+END $$
+
 # 3.3.c Items sold by a given seller and corresponding auction info
 CREATE PROCEDURE itemsSoldBy(IN custID CHAR(32))
 BEGIN
