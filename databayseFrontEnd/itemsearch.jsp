@@ -87,11 +87,9 @@
 
             			java.sql.Statement stmt1=conn.createStatement();
 
-//<<<<<<< HEAD
-                  out.println("Item: "+request.getParameter("search-input"));
-//=======
+                  out.println("Item: ");
+
                   out.println(request.getParameter("search-input") + "\n"); // this is what was queried
-//>>>>>>> f1ad0cfb294de4d10adc73e005ff366b033157cb
 
                   String query = "call itemsAvailableByKeyword('"+request.getParameter("search-input")+"')";
                   // call the query using the thing we just got from the user that was stored in the request object
