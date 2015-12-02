@@ -101,7 +101,7 @@
                   stmt1=conn.createStatement();
                   rs = stmt1.executeQuery("call approveAuction(" +auctID + ")");
                   out.println(auctID);
-                  out.println("<br");
+                  out.println("<br>");
 
                     // params.add(param);
                  }

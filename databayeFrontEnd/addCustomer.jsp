@@ -17,7 +17,7 @@
   // THIS GETS READY TO CONNECT TO THE DATABASE
   java.sql.Connection conn = null;
   java.sql.Statement stmt = null;	
-	
+out.println("yo");	
 			try	{
         // THIS CONNECTS TO THE DATABASE
         Class.forName("com.mysql.jdbc.Driver");

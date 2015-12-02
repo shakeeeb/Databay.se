@@ -102,8 +102,7 @@
             out.print("<br>");
 
             out.print("<form name=\"approve-auction-form\" id=\"signup-form\" action=\"approveAuction.jsp\" method=\"post\" role=\"form\">");
-            out.println("<table  class=\"table table-striped\
-            " border=\"1\" style=\"width:100%\">");
+            out.println("<table class=\"table table-striped\" style=\"width:100%\">");
             out.print("<tr>");
             out.print("<th>Approve</th>");
             out.print("<th>ItemID</th>");

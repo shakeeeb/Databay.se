@@ -81,11 +81,7 @@
                   }
 
                 }
-              } catch(Exception e) {
-                  out.print("Error: " + e);
-                } finally {
-            				try{conn.close();}catch(Exception ee){};
-            		}
+
           %>
 
       </ul>
@@ -190,6 +186,32 @@
 
   <div class = "item col-lg-offset-0">
 
+
+  <%
+   stmt1=conn.createStatement();
+   rs = stmt1.executeQuery("Select * From bestSellersList");
+
+   int count = 0;
+   String imagePath = new String();
+   while(rs.next()) {
+     count++;
+   }
+
+    stmt1=conn.createStatement();
+    rs = stmt1.executeQuery("Select * From bestSellersList");
+    int i = 0;
+    while(i < 4) {
+      if(rs.next()) {
+           imagePath =  rs.getString("ImagePath");
+           out.println("<img src=\"images/"+imagePath+"\" alt=\"images/default.jpg class=\"img-responsive\" height=\"250\" >");
+      }
+      i++;
+    }
+
+  %>
+
+<!---
+
   <a href="itemAuction.html"> <img src="images/pikachu.png" alt="Exotic Pets Photo" height="250" width="250"> </a>
 
   <img src="images/bulbasaur.png" alt="Exotic Pets Photo" height="250" width="250">
@@ -197,7 +219,7 @@
 <img src="images/charmander.png" alt="Exotic Pets Photo" height="250" width="250">
 
 <img src="images/squirtle.png" alt="Exotic Pets Photo" height="250" width="250">
-
+-->
   </div><!-- images -->
 </center>
 
@@ -222,3 +244,11 @@
 <script src="js/jquery.jcarousel.min.js"></script>
 </body>
 </html>
+
+<%
+}
+catch(Exception e) {
+    out.print("Error: " + e);
+  } finally {
+      try{conn.close();}catch(Exception ee){};
+  }%>

@@ -15,6 +15,16 @@
     if(document.getElementById("search-input").value != "") {
         document.getElementById("search-form").submit();
     }
+
+]
+  }
+
+  function UpdateAccountButton_onclick() {
+
+    if(document.getElementById("first-name-input").value != "") {
+        document.getElementById("edit-account-form").submit();
+    }
+
   }
   </script>
 </head>
@@ -39,8 +49,6 @@
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
-        <li><a href="signup.html">sign up</a></li>
-        <li><a href="login.html">log in</a></li>
         <li><a href="/logout.jsp">log out</a></li>
       </ul>
 
@@ -89,72 +97,121 @@
           java.sql.Statement stmt1=conn.createStatement();
 					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Customer Where CustomerID = '" + custID + "'");
 
-            while(rs.next()){
-              String fn = rs.getString("FirstName");
-              String ln = rs.getString("LastName");
-              out.print(" FirstName: " + fn);
-              out.print(" LastName: " + ln);
-              out.print("<br>");
+          String firstName = new String();
+          String lastName = new String();
+          String address = new String();
+          String city = new String();
+          String state = new String();
+          String zip = new String();
+          String tel = new String();
+          String email = new String();
+          String password = new String();
+          String ccard = new String();
+
+            if(rs.next()) {
+              firstName = rs.getString("FirstName");
+              lastName = rs.getString("LastName");
+              address = rs.getString("Address");
+              city = rs.getString("City");
+              state = rs.getString("State");
+              zip = rs.getString("Zipcode");
+              tel = rs.getString("Telephone");
+              email = rs.getString("Email");
+              password = rs.getString("Password");
+              ccard = rs.getString("CreditCard");
             }
+            %>
 
-            // customer suggestions
-            stmt1=conn.createStatement();
-            rs = stmt1.executeQuery("call getSuggestionsByType('" + custID + "')");
+            <div class="row">
+              <section class="col-sm-12">
+                <h2> Account Info:  </h2>
+              </section>
+            </div>
 
-            out.print("<br>");
-                  out.print("<br>");
-            out.print("Sugestions");
-            out.print("<br>");
+          <form name="edit-account-form" id="edit-account-form" action="editCustomer.jsp" method="post" role="form">
 
-              while(rs.next()) {
-                String itemName = rs.getString("Name");
-                String type = rs.getString("Type");
-                out.print("Item: " + itemName);
-                out.print("Type: " + type);
-                out.print("<br>");
-              }
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="first-name-label">First Name</label>
+              <%
+              out.println("<input name=\"first-name-input\" id=\"first-name-input\" type=\"text\" class=\"form-control col-lg-offset-1\" readonly value=\""+ firstName +"\">");
+              %>
+            </div>
 
-            // items sold by customer
-            out.print("<br>");
-            out.print("<br>");
-            out.print("Items Sold");
-            out.print("<br>");
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="last-name-label">Last Name</label>
+              <%
+              out.println("<input name=\"last-name-input\" id=\"last-name-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ lastName +"\">");
+              %>
+
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="email-label">Email</label>
+              <%
+              out.println("<input name=\"email-input\" id=\"email-input\" type=\"email\" class=\"form-control col-lg-offset-1\" value=\""+ email +"\">");
+              %>
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="password-label">Password</label>
+              <%
+              out.println("<input name=\"password-input\" id=\"password-input\" type=\"password\" class=\"form-control col-lg-offset-1\" value=\""+ password +"\">");
+              %>
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="phone-label">Phone</label>
+              <%
+              out.println("<input name=\"phone-input\" id=\"phone-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ tel +"\">");
+              %>
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="address-label">Street Address</label>
+              <%
+              out.println("<input name=\"address-input\" id=\"address-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ address +"\">");
+              %>
+
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="city-label">City</label>
+                <%
+                out.println("<input name=\"city-input\" id=\"city-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ city +"\">");
+                %>
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="state-label">State</label>
+              <%
+              out.println("<input name=\"state-input\" id=\"state-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ state +"\">");
+              %>
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="zip-label">Zip Code</label>
+              <%
+              out.println("<input name=\"zip-input\" id=\"zip-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ zip +"\">");
+              %>
+            </div>
+
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="ccard-label">Credit Card</label>
+              <%
+              out.println("<input name=\"ccard-input\" id=\"ccard-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ ccard +"\">");
+              %>
+            </div>
+
+            <div class="form-group col-lg-1 form-large col-lg-offset-7">
+                <input id="UpdateAccountButton" type="submit" class="btn btn-primary" value="Update Account" onclick="return UpdateAccountButton_onclick()" >
+            </div>
+
+          </form> <!--form-->
 
 
 
-            stmt1=conn.createStatement();
-            rs = stmt1.executeQuery("call itemsSoldBy('" + custID + "')");
 
-              while(rs.next()){
-                String itemName = rs.getString("Name");
-                String isComplete = rs.getString("isComplete");
-                out.print("Item: " + itemName);
-                out.print("Active: " + isComplete);
-                out.print("<br>");
-              }
-
-
-            // get past auction
-            out.print("<br>");
-                  out.print("<br>");
-                out.print("Past Auctions");
-                        out.print("<br>");
-
-             stmt1=conn.createStatement();
-             rs = stmt1.executeQuery("call getPastAuctions('" + custID + "')");
-
-              while(rs.next()){
-                String itemName = rs.getString("Name");
-                String isComplete = rs.getString("isComplete");
-                out.print("Item: " + itemName);
-                out.print("Active: " + isComplete);
-                out.print("<br>");
-              }
-
-
-
-
-
+<%
         } catch(Exception e) {
           out.println("Error: " + e);
         }

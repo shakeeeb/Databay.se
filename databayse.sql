@@ -292,13 +292,12 @@ the same name the second user should use a unique number. Ex: bob, bob_2, bob_3
 *******************************************************************************/
 CREATE PROCEDURE editCustomer(IN cust_fn CHAR(32), IN cust_ln CHAR(32),
 IN cust_addr CHAR(128), IN cust_city CHAR(32), IN cust_state CHAR(2), IN cust_zip
-INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20), IN cust_items INTEGER,
-IN cust_bought INTEGER, IN cust_rating INTEGER, IN cust_pass CHAR(32))
+INTEGER, IN cust_tel CHAR(20), IN cust_email CHAR(128), IN cust_cc CHAR(20), IN cust_pass CHAR(32))
 BEGIN
 UPDATE Customer
   SET CustomerID = Lower(cust_fn), FirstName = cust_fn, LastName = cust_ln, Address = cust_addr, City = cust_city,
   State = cust_state, ZipCode = cust_zip, Telephone = cust_tel, Email = cust_email, CreditCard = cust_cc,
-  ItemsPurchased = cust_bought, ItemsSold = cust_items, Rating = cust_rating, Passord = cust_pass
+  Password = cust_pass
   WHERE CustomerID = cust_fn;
 End $$
 
@@ -336,6 +335,15 @@ BEGIN
   Where (B.CustomerID = custID AND B.AuctionID = A.AuctionID) OR A.SellerID = custID
   AND A.ItemID = I.ItemID
   GROUP BY A.AuctionID;
+END $$
+
+CREATE PROCEDURE getCompleteAuctions(IN custID CHAR(32))
+BEGIN
+#TODO are we supposed to include being a seller as participant
+SELECT A.*
+FROM Auction A
+Where A.SellerID = custID AND A.isComplete = 1
+GROUP BY A.AuctionID;
 END $$
 
 # Auctions that need to be approved
@@ -446,14 +454,14 @@ BEGIN
 UPDATE Auction SET isComplete = 0 where AuctionID = auct_id;
 END $$
 
-CREATE PROCEDURE promoteToManager(IN empl_SSN CHAR(14))
+CREATE PROCEDURE promoteToManager(IN employee_id INTEGER)
 BEGIN
-UPDATE Employee SET isManager = 1 WHERE SSN = empl_SSN;
+UPDATE Employee SET isManager = 1 WHERE EmployeeID = employee_id;
 End $$
 
-CREATE PROCEDURE demoteManager(IN empl_SSN CHAR(14))
+CREATE PROCEDURE demoteManager(IN employee_id INTEGER)
 BEGIN
-UPDATE Employee SET isManager = 0 WHERE SSN = empl_SSN;
+UPDATE Employee SET isManager = 0 WHERE EmployeeID = employee_id;
 End $$
 
 CREATE PROCEDURE getRepSales(IN empl_id INTEGER)
@@ -548,15 +556,16 @@ CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalCl
   WHERE A.ItemId = I.ItemId AND  A.isComplete = 1 AND A.SellerID = C.CustomerID
   GROUP BY C.CustomerID;
 
-CREATE VIEW DATABAYSE.itemsSold(Name, Type, Year, CopiesSold) AS
-  SELECT I.Name, I.Type, I.Year, SUM(I.CopiesSold)
+CREATE VIEW DATABAYSE.itemsSold(ItemID, Name, Type, Year, CopiesSold) AS
+  SELECT I.ItemID, I.Name, I.Type, I.Year, SUM(I.CopiesSold)
   FROM Item I
   GROUP BY I.Name, I.Type;
 
 /*3.1.h + 3.3.f Produce a best seller list of items*/
-CREATE VIEW DATABAYSE.bestSellersList(Name, Type, Year, CopiesSold) AS
-  SELECT *
-  FROM itemsSold
+CREATE VIEW DATABAYSE.bestSellersList(ItemID, Name, Type, Year, CopiesSold, ImagePath) AS
+  SELECT itemsSold.ItemID, itemsSold.Name, itemsSold.Type, itemsSold.Year, itemsSold.CopiesSold, A.ImagePath
+  FROM itemsSold , Auction A
+  WHERE itemsSold.ItemID = A.ItemID AND A.isComplete = 1
   ORDER BY CopiesSold DESC LIMIT 10; # DESC: descending order
 
 #3.3.c Produce a mailing list of customers

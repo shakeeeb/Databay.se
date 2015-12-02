@@ -140,9 +140,9 @@
 
             boolean hasUnnapprovedAuctions = false;
             while(rs.next()){
-                String itemName = rs.getString("Name");
+                String itemID = rs.getString("ItemID");
                 String isComplete = rs.getString("isComplete");
-                out.print("Item: " + itemName);
+                out.print("Item: " + itemID);
                 out.print("Active: " + isComplete);
                 out.print("<br>");
                 hasUnnapprovedAuctions = true;
@@ -161,7 +161,7 @@
             out.print("<br>");
 
              stmt1=conn.createStatement();
-             rs = stmt1.executeQuery("call getPastAuctions('" + custID + "')");
+             rs = stmt1.executeQuery("call getCompleteAuctions('" + custID + "')");
 
               while(rs.next()){
                 String itemName = rs.getString("Name");
@@ -181,6 +181,7 @@
         }
 %>
   <a href="createAuction.html" class="btn btn-default">Create Auction</a>
+  <a href="customerSettings.jsp" class="btn btn-default">Edit Account Info: </a>
 
 
   <br>
