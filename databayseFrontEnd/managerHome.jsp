@@ -59,7 +59,7 @@
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
-        <li><a href="signup.html">sign up</a></li>
+        
         <li><a href="login.html">log in</a></li>
         <li><a href="/logout.jsp">log out</a></li>
       </ul>
@@ -72,10 +72,8 @@
         <div class="col-lg-offset-6 input-group col-lg-6">
           <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
           <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
-          <input id="SearchButton" class="btn btn-default" type="button" value="Search"  onclick="return SearchButton_onclick()">
-
+          <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
           
-
         </div>
 
         </div>
@@ -88,60 +86,6 @@
   </nav>
 
   <div class="content container"><!-- content container -->
-
-<form name="get_rep-form" method="post" action="getRepSales.jsp">
-        <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-          <label for="repId-label">Get Sales Rep ID</label>
-          <input name="repId-input" id="repId-input" type="text" class="form-control col-lg-offset-1" placeholder="Rep Id">
-        </div>
-
-        <div class="form-group col-lg-1 form-large col-lg-offset-7">
-            <input id="GetRepSalesButton" type="button" class="btn btn-primary" value="Get Rep Sales" onclick="return GetRepSalesButton_onclick()" >
-        </div>
-        </form>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-
-        <form name="promoteToManager-form" method="post" action="promoteToManager.jsp">
-        <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-          <label for="promoteToManager-label">Promote to Manager</label>
-          <input name="promoteToManager-input" id="repId-input" type="text" class="form-control col-lg-offset-1" placeholder="ID of Person to Promote">
-        </div>
-
-        <div class="form-group col-lg-1 form-large col-lg-offset-7">
-            <input id="PromoteButton" type="button" class="btn btn-primary" value="Promote" onclick="return PromoteButton_onclick()" >
-        </div>
-        </form>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-
-        <form name="demoteToEmployee-form" method="post" action="demoteToEmployee.jsp">
-        <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-          <label for="demoteToEmployee-label">Demote to Employee</label>
-          <input name="demoteToEmployee-input" id="repId-input" type="text" class="form-control col-lg-offset-1" placeholder="ID of Person to Demote">
-        </div>
-
-        <div class="form-group col-lg-1 form-large col-lg-offset-7">
-            <input id="DemoteButton" type="button" class="btn btn-primary" value="Demote" onclick="return DemoteButton_onclick()" >
-        </div>
-        </form>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
-        <br>
 
 
 <%
@@ -163,11 +107,11 @@
 
           //connect to the database
           conn=java.sql.DriverManager.getConnection(mysURL,sysprops);
-          System.out.println("Connected successfully to database using JConnect");
+          System.out.println("Connected successfully to database using employeeJConnect");
 
           // employee info
           java.sql.Statement stmt1=conn.createStatement();
-          java.sql.ResultSet rs = stmt1.executeQuery("Select * From Employee Where EmployeeID = '" + emplID + "'AND isManager = 1");
+          java.sql.ResultSet rs = stmt1.executeQuery("Select * From Employee Where EmployeeID = " + emplID);
 
             if(rs.next()){
               String fn = rs.getString("FirstName");
@@ -218,7 +162,7 @@
           out.println("<table border=\"1\" style=\"width:100%\">");
           out.print("<tr>");
           out.print("<th>Name</th>");
-          out.print("<th>Type</th>");
+          out.print("<th>Sale</th>");
           out.print("</tr>");
             boolean hasSalesReport = false;
               while(rs.next()) {
@@ -232,8 +176,6 @@
             }
 
             out.println("</table>");
-
-
             
           // getBestCustomerRep
           out.print("<br>");
@@ -245,20 +187,17 @@
           out.println("<table border=\"1\" style=\"width:100%\">");
           out.print("<tr>");
           out.print("<th>Employee ID</th>");
-          out.print("<th>SSN</th>");
           out.print("<th>First Name</th>");
           out.print("<th>Last Name</th>");
           out.print("</tr>");
             boolean hasBestCustomerRep = false;
               while(rs.next()) {
                 String employeeID = rs.getString("EmployeeID");
-                String ssn = rs.getString("SSN");
                 String firstName = rs.getString("FirstName");
                 String lastName = rs.getString("LastName");
 
                 out.print("<tr>");
                 out.print("<td>" + employeeID + "</td>");
-                out.print("<td>" + ssn + "</td>");
                 out.print("<td>" + firstName + "</td>");
                 out.print("<td>" + lastName + "</td>");
                 out.print("</tr>");
@@ -266,33 +205,7 @@
             }
 
             out.println("</table>");
-
-
-
-
-          // promote
-          out.print("<br>");
-          out.print("<br>");
-          out.print("<label for=\"get-customer-rep-label\">Promote Employee </label>");
-          out.print("<br>");
-
-          rs = stmt1.executeQuery("call promoteToManager(" + get_id + ")");
-          
-            out.println("The Employee: "+ get_id +" has been promoted to Manager! :D");
             
-
-          // demote
-          out.print("<br>");
-          out.print("<br>");
-          out.print("<label for=\"get-customer-rep-label\">Demote Manager </label>");
-          out.print("<br>");
-
-          rs = stmt1.executeQuery("call demoteManager(" + get_id + ")");
-          
-            out.println("The Manager: "+ get_id +" has been demoted to Employee! :(");
-            
-
-
               /*
 
             // items sold by customer
@@ -341,56 +254,67 @@
         }
 %>
 
+        <br>
+        <br>
+        <br>
 
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
+        <form name="promoteToManager-form" method="post" action="promoteToManager.jsp">
+        <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+          <label for="promoteToManager-label">Promote to Manager</label>
+          <input name="promoteToManager-input" id="repId-input" type="text" class="form-control col-lg-offset-1" placeholder="ID of Person to Promote">
+        </div>
+
+        <div class="form-group col-lg-1 form-large col-lg-offset-7">
+            <input id="PromoteButton" type="button" class="btn btn-primary" value="Promote" onclick="return PromoteButton_onclick()" >
+        </div>
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <form name="demoteToEmployee-form" method="post" action="demoteToEmployee.jsp">
+        <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+          <label for="demoteToEmployee-label">Demote to Employee</label>
+          <input name="demoteToEmployee-input" id="repId-input" type="text" class="form-control col-lg-offset-1" placeholder="ID of Person to Demote">
+        </div>
+
+        <div class="form-group col-lg-1 form-large col-lg-offset-7">
+            <input id="DemoteButton" type="button" class="btn btn-primary" value="Demote" onclick="return DemoteButton_onclick()" >
+        </div>
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <form name="get_rep-form" method="post" action="getRepSales.jsp">
+        <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+          <label for="repId-label">Get Sales Rep ID</label>
+          <input name="repId-input" id="repId-input" type="text" class="form-control col-lg-offset-1" placeholder="Rep Id">
+        </div>
+
+        <div class="form-group col-lg-1 form-large col-lg-offset-7">
+            <input id="GetRepSalesButton" type="button" class="btn btn-primary" value="Get Rep Sales" onclick="return GetRepSalesButton_onclick()" >
+        </div>
+        </form>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
+
+
+
   <br>
   <br>
   <br>
@@ -400,6 +324,11 @@
 
 </div><!-- content container -->
 
+    <footer class="footer">
+      <div class="container">
+        <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>
+      </div>
+    </footer>
 
 <script src="js/jquery-2.1.4.min.js"></script>
 <script src="js/bootstrap.min.js"></script>

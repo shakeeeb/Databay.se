@@ -11,3 +11,8 @@ call addBid(2, 'tom', 21, 34);
 call addBid(2, 'oscar', 57, 67);
 
 call endAuction(2);
+
+/*sell two items*/
+/*CREATE PROCEDURE addBid(IN auctID INTEGER, IN custID CHAR(32),
+IN newBid DECIMAL(8,2), IN newMaxBid DECIMAL(8,2))*/
+call addBid(3, 'bob', );
