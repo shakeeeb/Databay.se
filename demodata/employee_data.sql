@@ -4,7 +4,7 @@ call addEmployee('123-45-6789', 'David', 'Smith', '123 College road',
 call addEmployee('789-12-3456', 'David', 'Warren', '456 Sunken Street',
   'Stony Brook', 'NY', 11794, '(516)632-9987', DATE('1999-2-2'),50,'password');
 
-call promoteToManager('789-12-3456');
+call promoteToManager(2);
 
 call addEmployee('123-22-4321', 'Steve', 'Madden', 'Algoville',
   'Prim', 'KR', 43210, '(456)789-432', DATE('1990-11-4'), 373,'password');

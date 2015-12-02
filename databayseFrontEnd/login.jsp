@@ -54,8 +54,15 @@
 					rs = stmt1.executeQuery(" select * from Employee where EmployeeID='"+username+"' and Password='"+userpasswd+"'");
 					if(rs.next())
 					{
+						if(rs.getString("isManager").contentEquals("1")) {
+							session.putValue("login", username);
+							response.sendRedirect("managerHome.jsp");
+						}
+
+						else {
 						session.putValue("login", username);
 						response.sendRedirect("employeeHome.jsp");
+					}
 					}
 
 					else
