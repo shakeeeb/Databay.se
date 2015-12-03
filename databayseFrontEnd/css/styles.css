@@ -1,6 +1,6 @@
 .navbar-default {
   border: none;
-  background-color: #BD1E23;
+  background-color: #36afcf;
   opacity: .96;
 }
 
@@ -10,7 +10,7 @@
 
 .footer {
   border: none;
-  background-color: #BD1E23;
+  background-color: #36afcf;
   opacity: .96;
 }
 
@@ -19,13 +19,16 @@
   padding-bottom: .5em;
 }
 
+body {
+    background-color: #f1e7da;
+} 
 
 .body{
-  background-color: #ffffff;
+  background-color: #f1e7da;
 }
 
 .btn-default{
-	color: #670a0a;
+	color: #36afcf;
 	background-color: #f0efee;
   
 }
@@ -40,4 +43,12 @@
 
 .dropdown-menu {
   width: 65em;
+}
+
+.text-muted {
+  color: #ffffff;
+}
+
+.input-group-addon {
+  color: #36afcf;
 }
