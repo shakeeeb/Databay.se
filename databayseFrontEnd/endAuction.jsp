@@ -1,6 +1,6 @@
 <%
   // THESE COLLECT THE DATA FROM THE SIGNUP FORM
-  String auctID = request.getParameter("auctID-input");
+  String auctID = request.getParameter("endAuction-input");
 
   // APPARENTLY THERES NO WAY AROUND PUTTING YOUR USERNAME AND PASSWORD IN THE CODE
   String mysqlPath = "jdbc:mysql://localhost/DATABAYSE";
