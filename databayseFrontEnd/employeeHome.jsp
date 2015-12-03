@@ -35,6 +35,14 @@
     }
   }
 
+
+
+  function endAuctionButton_onclick() {
+
+  if(document.getElementById("endAuction-input").value != "") {
+      document.getElementById("endAuction-form").submit();
+  }
+}
   </script>
 </head>
 
@@ -420,6 +428,18 @@
 
               %>
 
+              <form name="endAuction-form" method="post" action="endAuction.jsp">
+              <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+                <label for="endAuction-label">End an Auction</label>
+                <input name="endAuction-input" id="endAuction-input" type="text" class="form-control col-lg-offset-1" placeholder"End an Auction by ID #">
+              </div>
+
+              <div class="form-group col-lg-1 form-large col-lg-offset-7">
+                  <input id="endAuctionButton" name="endAuction" type="button" class="btn btn-primary" value="End Auction" onclick="return endAuctionButton_onclick()" >
+              </div>
+            </form>
+
+
       <form name="getBidHistory-form" method="post" action="getBidHistory.jsp">
         <div class ="form-group col-lg-6 form-large col-lg-offset-2">
           <label for="getBidHistory-label">Get Bid History of Auction</label>
@@ -433,6 +453,7 @@
         <br>
         <br>
         <br>
+
 
 
         <form name="getRevenueByItem-form" method="post" action="getRevenueByItem.jsp">
@@ -458,6 +479,8 @@
         <div class="form-group col-lg-1 form-large col-lg-offset-7">
             <input id="getRevenueByCustomerButton" type="button" class="btn btn-primary" value="GetRevenueByCustomer" onclick="return getRevenueByCustomerButton_onclick()" >
         </div>
+      </form>
+
 
 
 
