@@ -48,7 +48,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+        <a class="pull-left" href="index.jsp"><img src="images/logo.png" height="50px" width="50px"></a>
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
@@ -66,13 +66,13 @@
           <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
           <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
          <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
-          
+
         </div>
 
         </div>
       </form>
 
-      
+
 
     </div> <!-- container -->
 
@@ -144,7 +144,7 @@
               out.print("</form>");
 
 
-            
+
           // getMonthlySalesReport
           out.print("<br>");
           out.print("<br>");
@@ -171,7 +171,7 @@
             out.println("</table>");
 
 
-            
+
           // getBestCustomerRep
           out.print("<br>");
           out.print("<br>");
@@ -233,7 +233,7 @@
                 String closing_bid = rs.getString("ClosingBid");
 
                 out.print("<tr>");
-                
+
                 out.print("<td>" + firstName + "</td>");
                 out.print("<td>" + lastName + "</td>");
                 out.print("<td>" + name + "</td>");
@@ -247,7 +247,7 @@
             out.println("</table>");
             */
             out.println("The Employee with the id: "+ get_id +" has been promoted to Manager! :D");
-            
+
 
 
 

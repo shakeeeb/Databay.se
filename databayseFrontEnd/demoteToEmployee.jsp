@@ -55,7 +55,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+        <a class="pull-left" href="index.jsp"><img src="images/logo.png" height="50px" width="50px"></a>
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
@@ -79,7 +79,7 @@
         </div>
       </form>
 
-      
+
 
     </div> <!-- container -->
 
@@ -151,7 +151,7 @@
               out.print("</form>");
 
 
-            
+
           // getMonthlySalesReport
           out.print("<br>");
           out.print("<br>");
@@ -178,7 +178,7 @@
             out.println("</table>");
 
 
-            
+
           // getBestCustomerRep
           out.print("<br>");
           out.print("<br>");
@@ -221,7 +221,7 @@
           out.print("<br>");
 
           rs = stmt1.executeQuery("call demoteManager(" + get_id + ")");
-          
+
             out.println("The Manager: "+ get_id +" has been demoted to Employee! :(");
 
 

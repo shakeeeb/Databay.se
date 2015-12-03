@@ -25,8 +25,8 @@
   <nav class="navbar navbar1 navbar" role="navigation">
 
     <div class="container">
+        <a class="navbar-brand" href="index.jsp"><img src="images/logo.png" height="50px" width="50px"></a>
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
       </div><!-- navbar-header -->
     </div><!-- container -->
   </nav>
@@ -35,7 +35,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+        <a class="pull-left" href="index.jsp"><img src="images/logo.png" height="50px" width="50px"></a>
 
       <ul class="nav navbar-nav">
       <li><a></a></li>

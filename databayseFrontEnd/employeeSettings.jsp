@@ -45,7 +45,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+        <a class="pull-left" href="index.jsp"><img src="images/logo.png" height="50px" width="50px"></a>
 
       <ul class="nav navbar-nav">
       <li><a></a></li>
@@ -190,7 +190,7 @@
 
               <div class ="form-group col-lg-6 form-large col-lg-offset-2">
     <label for="state-label">State</label>
-    
+
 <input name="state-input" id="state-input" type="text" class="form-control col-lg-offset-1" placeholder="State">
 
 

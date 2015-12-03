@@ -40,7 +40,7 @@
 
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="index.html">databayse logo</a>
+        <a class="pull-left" href="index.jsp"><img src="images/logo.png" height="50px" width="50px"></a>
       <ul class="nav navbar-nav">
       <li><a></a></li>
 
@@ -159,7 +159,7 @@
                   rs = stmt1.executeQuery("Select * From Auction where AuctionID = " + auctID);
                   if(rs.next()) {
                     String isComplete = rs.getString("isComplete");
-        
+
 
                   if(isComplete.contentEquals("0")){
                     out.println("<div class =\"form-group col-lg-2 form-large col-lg-offset-0\">");
@@ -199,6 +199,21 @@
 }
 %>
 </div>
+<div>
+
+
+  <br>
+  <br>
+  <br>
+  <br>
+
+</div><!-- content container -->
+
+    <footer class="footer">
+      <div class="container">
+        <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>
+      </div>
+    </footer>
 <script src="js/jquery-2.1.4.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/script.js"></script>
