@@ -8,6 +8,7 @@ call addItem(name, type, year, );
 
 call addItem('Titanic', 'DVD', 2005, 3);
 call addItem('Nissan Sentra', 'car', 2007, 1);
+call addItem('Nissan Sentra', 'car', 2007, 1);
 call addItem('Titanic', 'DVD', 2005, 1);
 
 call addItem('Headphones', 'accessory', 2006, 200);

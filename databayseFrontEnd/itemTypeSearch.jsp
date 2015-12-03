@@ -122,7 +122,9 @@
                   // call the query using the thing we just got from the user that was stored in the request object
 
 
-					java.sql.ResultSet res = stmt1.executeQuery(query);
+
+
+          java.sql.ResultSet res = stmt1.executeQuery(query);
           //HttpSession session = request.getSession();
 
           int count = 0;
@@ -130,9 +132,12 @@
           out.print("<form name=\"search-results-form\" id=\"search-results-form\" action=\"auction.jsp\" method=\"get\" role=\"form\">");
           out.println("<table class=\"table table-striped\"style=\"width:100%\">");
           out.print("<tr>");
-          out.print("<th>Buy It Now!</th>");
+          out.print("<th>Item</th>");
           out.print("<th>Seller ID</th>");
-          out.print("<th>Item Name</th>");
+          out.print("<th>Name</th>");
+          out.print("<th>Closing Date</th>");
+          out.print("<th>Closing Time</th>");
+          out.print("<th>Buy It Now!</th>");
           out.print("</tr>");
           while(res.next()){ // go through the result set,
            //Retrieve by column name
@@ -141,12 +146,17 @@
            String imagePath = res.getString("ImagePath");
            String sellerID = res.getString("SellerID");
            String auctionID = res.getString("AuctionID");
+           String closingDate = res.getString("ClosingDate");
+           String closingTime = res.getString("ClosingTime");
 
-           //Display values
+
            out.print("</tr>");
-           out.print("<td><input type=\"submit\" name=\""+auctionID+"\" value =\"submit\"></td>");
+           out.print("<td><img src=images\\"+imagePath+" alt=\":D\" style=\"width:128px;height:128px;\"></td>");
            out.print("<td>" + sellerID + "</td>");
            out.print("<td>" + name + "</td>");
+          out.print("<td>" + closingDate + "</td>");
+          out.print("<td>" + closingTime + "</td>");
+          out.print("<td><input type=\"submit\" name=\""+auctionID+"\" value =\"Buy Now\"></td>");
            out.print("</tr>");
            count++;
            }

@@ -85,7 +85,7 @@
                     else { // in this case the user is a logged in employee
                       out.print("<li><a href=\"employeeHome.jsp\">Dashboard</a></li>");
                   }
-                    out.print("<li><a href=\"employeeHome.jsp\">Dashboard</a></li>");
+
 
                     out.print("<li><a href=\"logout.jsp\">log out</a></li>");
                   }
@@ -152,24 +152,17 @@
 
   <div class="carousel-inner">
   <div class = "item active">
-  <img src="images/charmander.png" alt="Exotic Pets Photo" height="400" width="500">
+  <a href="itemTypeSearch.jsp?search-input=holiday">
+  <img src="images/holidaybanner.jpg" alt="Exotic Pets Photo" height="250" width="1200">
+  </a>
   </div><!-- div for item 1 -->
 
   <div class = "item">
-  <img src="images/squirtle.png" alt="Exotic Pets Photo" height="400" width="500">
+      <a href="itemTypeSearch.jsp?search-input=grocery">
+  <img src="images/grocerybanner.jpg" alt="Exotic Pets Photo" height="250" width="1200">
+    </a>
   </div><!-- div for item 2 -->
 
-  <div class = "item">
-  <img src="images/charmander.png" alt="Exotic Pets Photo" height="400" width="500">
-  </div><!-- div for item 3 -->
-
-  <div class = "item">
-  <img src="images/bulbasaur.png" alt="Exotic Pets Photo" height="400" width="500">
-</div><!-- div for item 4 -->
-
-  <div class = "item">
-  <img src="images/pikachu.png" alt="Exotic Pets Photo" height="400" width="500">
-</div><!-- div for item 5 -->
 
 
   </div> <!-- carousel inner -->

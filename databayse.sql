@@ -559,6 +559,7 @@ CREATE VIEW DATABAYSE.salesByCustomerName(CustomerName, TotalCopiesSold, TotalCl
 CREATE VIEW DATABAYSE.itemsSold(ItemID, Name, Type, Year, CopiesSold) AS
   SELECT I.ItemID, I.Name, I.Type, I.Year, SUM(I.CopiesSold)
   FROM Item I
+  WHERE I.CopiesSold > 0
   GROUP BY I.Name, I.Type;
 
 /*3.1.h + 3.3.f Produce a best seller list of items*/
