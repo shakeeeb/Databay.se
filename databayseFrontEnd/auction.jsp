@@ -156,8 +156,12 @@
                     out.println("<br>");
                   }
 
+                  rs = stmt1.executeQuery("Select * From Auction where AuctionID = " + auctID);
+                  if(rs.next()) {
+                    String isComplete = rs.getString("isComplete");
+        
 
-
+                  if(isComplete.contentEquals("0")){
                     out.println("<div class =\"form-group col-lg-2 form-large col-lg-offset-0\">");
                     out.println("<label for=\"bid-label\">Place Bid: </label>");
                     out.println("<input name=\"bid-input\" id=\"bid-input\" type=\"text\" class=\"form-control col-lg-offset-1\" placeholder=\"bid\">");
@@ -171,7 +175,11 @@
                     out.println("<input id=\"PlaceBidButton\" type=\"submit\" class=\"btn btn-primary\" value=\"Place Bid\" onclick=\"return PlaceBidButton_onclick()\" >");
 
                     out.println("</div>");
-
+                  }
+                  else {
+                    out.println("Auction Complete");
+                  }
+                }
                       out.println("<input hidden name=\""+auctID+"\">");
 
           out.println("</form>");

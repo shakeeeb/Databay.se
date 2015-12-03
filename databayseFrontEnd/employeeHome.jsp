@@ -340,10 +340,10 @@
             out.print("<tr>");
 
             out.print("<th>CustomerID</th>");
-            out.print("<th>Name</th>");
-            out.print("<th>Type</th>");
-            out.print("<th>Year</th>");
-            out.print("<th>CopiesSold</th>");
+            out.print("<th>First Name</th>");
+            out.print("<th>Last Name</th>");
+            out.print("<th>Items Sold</th>");
+            out.print("<th>Items Purchased</th>");
 
             out.print("</tr>");
               while(rs.next()) {
@@ -382,11 +382,11 @@
             out.println("<table class=\"table table-striped\" style=\"width:100%\">");
             out.print("<tr>");
 
-            out.print("<th>CustomerID</th>");
-            out.print("<th>Name</th>");
-            out.print("<th>Type</th>");
-            out.print("<th>Year</th>");
-            out.print("<th>CopiesSold</th>");
+              out.print("<th>CustomerID</th>");
+              out.print("<th>First Name</th>");
+              out.print("<th>Last Name</th>");
+              out.print("<th>Items Sold</th>");
+              out.print("<th>Items Purchased</th>");
 
             out.print("</tr>");
               while(rs.next()) {
