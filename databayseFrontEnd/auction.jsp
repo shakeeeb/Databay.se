@@ -43,7 +43,7 @@
         <a class="navbar-brand" href="index.html">databayse logo</a>
       <ul class="nav navbar-nav">
       <li><a></a></li>
-    
+
       </ul>
 
       </div><!-- navbar-header -->

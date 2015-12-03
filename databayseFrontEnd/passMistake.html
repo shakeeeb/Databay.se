@@ -1,1 +1,154 @@
-This will be the same as a login screen but with an alert
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <title>databayse</title>
+  <script language="javascript" type="text/javascript">
+
+  function loginButton_onclick() {
+
+//    if(document.getElementById("first-name-input").value == "")
+  //		alert("Please fill in your first name");
+  //  else {
+    //  document.getElementById("signup-form").submit();
+    //}
+
+    document.getElementById("login-form").submit();
+  }
+
+</script>
+</head>
+<body>
+
+  <nav class="navbar navbar1 navbar" role="navigation">
+
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+      </div><!-- navbar-header -->
+    </div><!-- container -->
+  </nav>
+
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="index.jsp">databayse logo</a>
+
+
+
+
+
+      </div><!-- navbar-header -->
+
+      <div class="container navtop-margin">
+
+
+      <div class="col-lg-offset-6 input-group col-lg-6">
+        <input type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
+        <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span>
+      </div>
+
+
+      </div>
+
+    </div><!-- container -->
+
+  </nav>
+
+
+<div class="content container"><!-- content container -->
+
+
+
+  <div class="row">
+    <section class="col-sm-12">
+      <h2>Log in to your account</h2>
+    </section>
+  </div>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+<form name="login-form" id="login-form" action="login.jsp" method="post" role="form">
+  <div class ="form-group col-lg-6 form-large col-lg-offset-2 ">
+    <label class="text-danger">Wrong Password!</label>
+  </div> <!--form group-->
+
+  <div class ="form-group col-lg-6 form-large col-lg-offset-2 ">
+    <label for="userName">Username</label>
+    <input name="username-input" type="userName" class="form-control col-lg-offset-1" id="FN" placeholder="User Name">
+  </div> <!--form group-->
+
+  <div class ="form-group col-lg-6 form-large col-lg-offset-2 ">
+    <label for="pwd">Password</label>
+    <input name="password-input" type="password" class="form-control col-lg-offset-1" id="pwd" placeholder="Password">
+  </div> <!--form group-->
+
+  <div class="form-group form-group col-lg-1 form-large col-lg-offset-7">
+      <input type="submit" class="btn btn-primary" value="Login" onclick="return loginButton_onclick()">
+
+  </div><!--form group-->
+
+  <div class="form-group col-lg-1 form-large col-lg-offset-7">
+  <a href="signup.html" class="btn btn-default">Sign up</a>
+  </div>
+
+</form> <!--form-->
+
+
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+</div><!-- content container -->
+
+    <footer class="footer">
+      <div class="container">
+        <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>
+      </div>
+    </footer>
+
+
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

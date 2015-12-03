@@ -153,17 +153,17 @@ BEGIN
 End $$
 
 # 3.1.e Selects the revenue from a particular item
-CREATE PROCEDURE getRevenueByItem(IN itemName Char(20))
+CREATE PROCEDURE getRevenueByItem(IN itemID INTEGER)
 BEGIN
-  SELECT SUM(A.ClosingBid)
-  FROM Auction A, Item I
-  WHERE I.Name = itemName AND I.ItemID = A.ItemID AND A.isComplete = 1;
+  SELECT SUM(A.ClosingBid) AS Revenue
+  FROM Auction A
+  WHERE itemID = A.ItemID AND A.isComplete = 1;
 End $$
 
 # 3.1.e Selects the revenue from a particular type of item type
 CREATE PROCEDURE getRevenueByType(IN itemType Char(12))
 BEGIN
-  SELECT SUM(A.ClosingBid)
+  SELECT SUM(A.ClosingBid) AS Revenue
   FROM Auction A, Item I
   WHERE I.Type = itemType AND I.ItemID = A.ItemID AND A.isComplete = 1;
 End $$
@@ -171,7 +171,7 @@ End $$
 # 3.1.e Selects the revenue from a particular type of customer
 CREATE PROCEDURE getRevenueByCustomer(IN customerName Char(32))
 BEGIN
-  SELECT SUM(A.ClosingBid)
+  SELECT SUM(A.ClosingBid) AS Revenue
   FROM Auction A, Customer C
   WHERE C.CustomerID = customerName AND C.CustomerID = A.SellerID AND A.isComplete = 1;
 End $$
@@ -379,7 +379,7 @@ END $$
 CREATE PROCEDURE itemsAvailableByType(IN itemType CHAR(32))
 BEGIN
   SELECT I.Name, A.CurrentHighBid, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
-  A.ClosingDate, A.ClosingTime
+  A.ClosingDate, A.ClosingTime, A.imagePath
   FROM  Auction A, Item I
   Where I.Type = itemType AND A.ItemID = I.ItemID AND A.isComplete = 0
   GROUP BY A.AuctionID;
@@ -562,8 +562,8 @@ CREATE VIEW DATABAYSE.itemsSold(ItemID, Name, Type, Year, CopiesSold) AS
   GROUP BY I.Name, I.Type;
 
 /*3.1.h + 3.3.f Produce a best seller list of items*/
-CREATE VIEW DATABAYSE.bestSellersList(ItemID, Name, Type, Year, CopiesSold, ImagePath) AS
-  SELECT itemsSold.ItemID, itemsSold.Name, itemsSold.Type, itemsSold.Year, itemsSold.CopiesSold, A.ImagePath
+CREATE VIEW DATABAYSE.bestSellersList(ItemID, Name, Type, Year, CopiesSold, ImagePath, AuctionID) AS
+  SELECT itemsSold.ItemID, itemsSold.Name, itemsSold.Type, itemsSold.Year, itemsSold.CopiesSold, A.ImagePath, A.AuctionID
   FROM itemsSold , Auction A
   WHERE itemsSold.ItemID = A.ItemID AND A.isComplete = 1
   ORDER BY CopiesSold DESC LIMIT 10; # DESC: descending order
