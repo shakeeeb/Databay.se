@@ -148,7 +148,7 @@ CREATE PROCEDURE getMonthlySalesReport(IN Month INTEGER)
 BEGIN
   SELECT I.Name, SUM(A.ClosingBid)
   FROM Item I, Auction A
-  WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID
+  WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID AND A.isComplete = 1 AND A.CurrentHighBid > 0
   GROUP BY I.Name, I.Type;
 End $$
 
@@ -310,9 +310,9 @@ End $$
 # 3.2.d + 3.3.g Produce a list of item suggestions for a given customer (based on that customer's past purchases)
 CREATE PROCEDURE getSuggestionsByType(IN customerID CHAR(32))
 BEGIN
-SELECT I.*
-FROM getTypesForSuggestion S, Item I
-WHERE S.Type = I.Type AND S.CustomerID = customerID;
+SELECT I.*, A.*
+FROM getTypesForSuggestion S, Item I, Auction A
+WHERE S.Type = I.Type AND S.CustomerID = customerID AND I.ItemID = A.ItemID AND A.isComplete = 0;
 End
 $$
 
