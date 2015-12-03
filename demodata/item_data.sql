@@ -23,7 +23,7 @@ call addItem('Toyota Camry', 'car', 2012, 1);
 call addItem('Honda Civic', 'car', 2010, 1);
 call addItem('Mazda Miata', 'car', 2008, 2);
 
-call addItem('Santa Hat','clothes',2015,20);
+call addItem('Santa Hat','holiday',2015,20);
 call addItem('elf outfit','clothes',2012,2);
 call addItem('eyepatches', 'clothes',2009,30);
 call addItem('ruffled shirt','clothes', 1882, 1);
