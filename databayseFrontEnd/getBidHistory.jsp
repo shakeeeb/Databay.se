@@ -29,11 +29,13 @@
     }
   }
 
-    function getRevenueByCustomerButton_onclick() {
+  function getRevenueByCustomerButton_onclick() {
     if(document.getElementById("getRevenueByCustomer-input").value != "") {
         document.getElementById("getRevenueByCustomer-form").submit();
     }
   }
+
+
 
   </script>
 </head>
@@ -86,6 +88,7 @@
     String mysUserID = "root";
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
+    String get_id = request.getParameter("getBidHistory-input");
 
     String emplID = "" + session.getValue("login");
   	java.sql.Connection conn=null;
@@ -120,7 +123,7 @@
             out.print("<label for=\"unnaproved-auctions-label\">Unnaproved Auctions</label>");
             out.print("<br>");
 
-            out.print("<form name=\"approve-auction-form\" id=\"signup-form\" method=\"post\" role=\"form\">");
+            out.print("<form name=\"approve-auction-form\" id=\"signup-form\" action=\"approveAuction.jsp\" method=\"post\" role=\"form\">");
             out.println("<table class=\"table table-striped\" style=\"width:100%\">");
             out.print("<tr>");
             out.print("<th>Approve</th>");
@@ -144,11 +147,11 @@
                  itemName = rs.getString("Name");
                  itemType = rs.getString("Type");
                  itemYear = rs.getString("Year");
-
+  
 
                }
 
-
+              
 
                 out.print("<td><input type=\"checkbox\" name=\""+auctionID+"\"></td>");
                 out.print("<td>" + itemID + "</td>");
@@ -160,14 +163,14 @@
               }
               out.println("</table>");
               out.print("<br>");
-
+              
 
               out.println("<input type=\"submit\" value=\"Approve\">");
               out.print("</form>");
 
               out.print("<br>");
               out.print("<br>");
-
+            
             // unnapproved auctions
             stmt1=conn.createStatement();
             rs = stmt1.executeQuery("select * from viewAllItems");
@@ -194,7 +197,7 @@
                 String amountInStock = rs.getString("AmountInStock");
 
 
-
+                
                 out.print("<td>" + itemName + "</td>");
                 out.print("<td>" + itemType + "</td>");
                 out.print("<td>" + itemYear + "</td>");
@@ -203,9 +206,9 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-          out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
-
+              
 
 
               //customer mailing list
@@ -234,7 +237,7 @@
                 String city = rs.getString("City");
                 String state = rs.getString("State");
                 String zipCode = rs.getString("ZipCode");
-
+                
                 out.print("<td>" + lastName + "</td>");
                 out.print("<td>" + firstName + "</td>");
                 out.print("<td>" + address + "</td>");
@@ -244,9 +247,9 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-              out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");              
 
 
 
@@ -270,16 +273,16 @@
                 String name = rs.getString("Name");
                 String totalCopiesSold = rs.getString("TotalCopiesSold");
                 String totalClosingBids = rs.getString("TotalClosingBids");
-
+                
                 out.print("<td>" + name + "</td>");
                 out.print("<td>" + totalCopiesSold + "</td>");
                 out.print("<td>" + totalClosingBids + "</td>");
                 out.print("</tr>");
               }
               out.println("</table>");
-              out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");              
 
 
 
@@ -300,7 +303,7 @@
             out.print("<th>Type</th>");
             out.print("<th>Year</th>");
             out.print("<th>CopiesSold</th>");
-
+            
             out.print("</tr>");
               while(rs.next()) {
                 out.print("<tr>");
@@ -310,7 +313,7 @@
                 String type = rs.getString("Type");
                 String year = rs.getString("Year");
                 String copiesSold = rs.getString("CopiesSold");
-
+                
 
                 out.print("<td>" + itemID + "</td>");
                 out.print("<td>" + name + "</td>");
@@ -321,12 +324,11 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-              out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");              
 
-              //getBestBuyer
-
+  //getBestBuyer
             stmt1=conn.createStatement();
             rs = stmt1.executeQuery("call getBestBuyer()");
 
@@ -344,7 +346,7 @@
             out.print("<th>Type</th>");
             out.print("<th>Year</th>");
             out.print("<th>CopiesSold</th>");
-
+            
             out.print("</tr>");
               while(rs.next()) {
                 out.print("<tr>");
@@ -354,7 +356,7 @@
                 String lastName = rs.getString("LastName");
                 String itemsSold = rs.getString("ItemsSold");
                 String itemsPurchased = rs.getString("ItemsPurchased");
-
+                
 
                 out.print("<td>" + customerID + "</td>");
                 out.print("<td>" + firstName + "</td>");
@@ -367,7 +369,7 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");  
 
               //get best merchant
             stmt1=conn.createStatement();
@@ -387,7 +389,7 @@
             out.print("<th>Type</th>");
             out.print("<th>Year</th>");
             out.print("<th>CopiesSold</th>");
-
+            
             out.print("</tr>");
               while(rs.next()) {
                 out.print("<tr>");
@@ -397,7 +399,7 @@
                 String lastName = rs.getString("LastName");
                 String itemsSold = rs.getString("ItemsSold");
                 String itemsPurchased = rs.getString("ItemsPurchased");
-
+                
 
                 out.print("<td>" + customerID + "</td>");
                 out.print("<td>" + firstName + "</td>");
@@ -410,7 +412,50 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
+              out.print("<br>");  
+
+            //getBidHistory
+            stmt1=conn.createStatement();
+            rs = stmt1.executeQuery("call getBidHistory('" + get_id + "')");
+
+            out.print("<br>");
+            out.print("<label for=\"itemsSold-label\"> Bid History of Auction </label>");
+            out.print("<br>");
+
+            out.print("<form name=\"itemsSold-form\" id=\"signup-form\" action=\"approveAuction.jsp\" method=\"post\" role=\"form\">");
+            out.println("<table class=\"table table-striped\" style=\"width:100%\">");
+            out.print("<tr>");
+
+            out.print("<th>Bid</th>");
+            out.print("<th>MaxBid</th>");
+            out.print("<th>CustomerID</th>");
+            out.print("<th>BidDate</th>");
+            out.print("<th>BidTime</th>");
+            
+            out.print("</tr>");
+              while(rs.next()) {
+                out.print("<tr>");
+
+                String bid = rs.getString("Bid");
+                String maxBid = rs.getString("MaxBid");
+                String customerID = rs.getString("CustomerID");
+                String bidDate = rs.getString("BidDate");
+                String bidTime = rs.getString("BidTime");
+                
+
+                out.print("<td>" + bid + "</td>");
+                out.print("<td>" + maxBid + "</td>");
+                out.print("<td>" + customerID + "</td>");
+                out.print("<td>" + bidDate + "</td>");
+                out.print("<td>" + bidTime + "</td>");
+
+                out.print("</tr>");
+              }
+              out.println("</table>");
+              out.print("</form>");
               out.print("<br>");
+              out.print("<br>"); 
+
 
 
 
@@ -420,21 +465,24 @@
 
               %>
 
-      <form name="getBidHistory-form" method="post" action="getBidHistory.jsp">
+
+
+
+
+        <form name="getBidHistory-form" method="post" action="getBidHistory.jsp">
         <div class ="form-group col-lg-6 form-large col-lg-offset-2">
           <label for="getBidHistory-label">Get Bid History of Auction</label>
           <input name="getBidHistory-input" id="getBidHistory-input" type="text" class="form-control col-lg-offset-1" placeholder="ID of Auction to get history">
         </div>
 
         <div class="form-group col-lg-1 form-large col-lg-offset-7">
-            <input id="getBidHistoryButton" type="button" class="btn btn-primary" value="GetHistory" onclick="return getHistoryButton_onclick()" >
+            <input id="getBidHistoryButton" type="button" class="btn btn-primary" value="Get History" onclick="return getHistoryButton_onclick()" >
         </div>
         </form>
         <br>
         <br>
         <br>
-
-
+        
         <form name="getRevenueByItem-form" method="post" action="getRevenueByItem.jsp">
         <div class ="form-group col-lg-6 form-large col-lg-offset-2">
           <label for="getRevenueByItem-label">Get Revenue by Item</label>
@@ -442,7 +490,7 @@
         </div>
 
         <div class="form-group col-lg-1 form-large col-lg-offset-7">
-          <input id="getRevenueByItemButton" type="button" class="btn btn-primary" value="GetRevenueByItem" onclick="return getRevenueByItemButton_onclick()" >
+            <input id="getRevenueByItemButton" type="button" class="btn btn-primary" value="GetRevenueByItem" onclick="return getRevenueByItemButton_onclick()" >
         </div>
         </form>
         <br>
@@ -471,22 +519,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <%
-
 
         } catch(Exception e) {
           out.println("Error: " + e);
@@ -498,7 +531,6 @@
   <br>
 
 </div><!-- content container -->
-
     <footer class="footer">
       <div class="container">
         <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>

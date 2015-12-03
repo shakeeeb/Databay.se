@@ -27,10 +27,17 @@
 .btn-default{
 	color: #670a0a;
 	background-color: #f0efee;
-
-
+  
 }
 
 .navbar-default .navbar-nav>li>a{
 	color:#fffaf0;
+}
+
+.btn-dropdown {
+  width: 65em;
+}
+
+.dropdown-menu {
+  width: 65em;
 }

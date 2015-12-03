@@ -17,10 +17,6 @@
         document.getElementById("search-form").submit();
     }
   }
-
-  function PlaceBidButton_onclick() {
-    document.getElementById("bid-form").submit();
-  }
   </script>
 </head>
 
@@ -94,12 +90,14 @@
       </ul><!--END HERE -->
 
       </div><!-- navbar-header -->
+
       <form name="search-form" id="search-form" action="itemsearch.jsp" method="post" role="form">
         <div class="container navtop-margin">
 
         <div class="col-lg-offset-6 input-group col-lg-6">
           <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
-          <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
+          <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
+          <input id="SearchButton" class="btn btn-default" type="button" value="Search"  onclick="return SearchButton_onclick()">
         </div>
 
         </div>
@@ -128,9 +126,6 @@
 
 
               String itemID = new String();
-              String itemName = new String();
-              String itemType = new String();
-              String itemYear = new String();
               String sellerID = new String();
               String buyerID = new String();
               String currentHighBid = new String();
@@ -151,7 +146,6 @@
                closingDate = res.getString("ClosingDate");
                closingTime = res.getString("ClosingTime");
                imagePath = res.getString("ImagePath");
-
               res = stmt1.executeQuery("Select * From Item where ItemID = " + itemID);
                 if(res.next()) {
 
@@ -184,9 +178,6 @@
                     out.println("<div class=\"form-group col-lg-0 form-large col-lg-offset-0\">");
                     out.println("<input id=\"PlaceBidButton\" type=\"submit\" class=\"btn btn-primary\" value=\"Place Bid\" onclick=\"return PlaceBidButton_onclick()\" >");
                     out.println("</div>");
-
-
-
 
             }
 

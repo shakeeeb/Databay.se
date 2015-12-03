@@ -86,6 +86,7 @@
     String mysUserID = "root";
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
+    String get_id = request.getParameter("getRevenueByCustomer-input");
 
     String emplID = "" + session.getValue("login");
   	java.sql.Connection conn=null;
@@ -144,11 +145,11 @@
                  itemName = rs.getString("Name");
                  itemType = rs.getString("Type");
                  itemYear = rs.getString("Year");
-
+  
 
                }
 
-
+              
 
                 out.print("<td><input type=\"checkbox\" name=\""+auctionID+"\"></td>");
                 out.print("<td>" + itemID + "</td>");
@@ -160,14 +161,14 @@
               }
               out.println("</table>");
               out.print("<br>");
-
+              
 
               out.println("<input type=\"submit\" value=\"Approve\">");
               out.print("</form>");
 
               out.print("<br>");
               out.print("<br>");
-
+            
             // unnapproved auctions
             stmt1=conn.createStatement();
             rs = stmt1.executeQuery("select * from viewAllItems");
@@ -193,8 +194,6 @@
                 String copiesSold = rs.getString("CopiesSold");
                 String amountInStock = rs.getString("AmountInStock");
 
-
-
                 out.print("<td>" + itemName + "</td>");
                 out.print("<td>" + itemType + "</td>");
                 out.print("<td>" + itemYear + "</td>");
@@ -203,10 +202,9 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-          out.println("</form>");
+              out.println("</form>");
               out.print("<br>");
-
-
+              
 
               //customer mailing list
             stmt1=conn.createStatement();
@@ -234,7 +232,7 @@
                 String city = rs.getString("City");
                 String state = rs.getString("State");
                 String zipCode = rs.getString("ZipCode");
-
+                
                 out.print("<td>" + lastName + "</td>");
                 out.print("<td>" + firstName + "</td>");
                 out.print("<td>" + address + "</td>");
@@ -246,7 +244,7 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");              
 
 
 
@@ -270,7 +268,7 @@
                 String name = rs.getString("Name");
                 String totalCopiesSold = rs.getString("TotalCopiesSold");
                 String totalClosingBids = rs.getString("TotalClosingBids");
-
+                
                 out.print("<td>" + name + "</td>");
                 out.print("<td>" + totalCopiesSold + "</td>");
                 out.print("<td>" + totalClosingBids + "</td>");
@@ -279,7 +277,7 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");              
 
 
 
@@ -300,7 +298,7 @@
             out.print("<th>Type</th>");
             out.print("<th>Year</th>");
             out.print("<th>CopiesSold</th>");
-
+            
             out.print("</tr>");
               while(rs.next()) {
                 out.print("<tr>");
@@ -310,7 +308,7 @@
                 String type = rs.getString("Type");
                 String year = rs.getString("Year");
                 String copiesSold = rs.getString("CopiesSold");
-
+                
 
                 out.print("<td>" + itemID + "</td>");
                 out.print("<td>" + name + "</td>");
@@ -323,10 +321,10 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");     
 
-              //getBestBuyer
 
+  //getBestBuyer
             stmt1=conn.createStatement();
             rs = stmt1.executeQuery("call getBestBuyer()");
 
@@ -344,7 +342,7 @@
             out.print("<th>Type</th>");
             out.print("<th>Year</th>");
             out.print("<th>CopiesSold</th>");
-
+            
             out.print("</tr>");
               while(rs.next()) {
                 out.print("<tr>");
@@ -354,7 +352,7 @@
                 String lastName = rs.getString("LastName");
                 String itemsSold = rs.getString("ItemsSold");
                 String itemsPurchased = rs.getString("ItemsPurchased");
-
+                
 
                 out.print("<td>" + customerID + "</td>");
                 out.print("<td>" + firstName + "</td>");
@@ -367,7 +365,7 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
-              out.print("<br>");
+              out.print("<br>");  
 
               //get best merchant
             stmt1=conn.createStatement();
@@ -387,7 +385,7 @@
             out.print("<th>Type</th>");
             out.print("<th>Year</th>");
             out.print("<th>CopiesSold</th>");
-
+            
             out.print("</tr>");
               while(rs.next()) {
                 out.print("<tr>");
@@ -397,7 +395,7 @@
                 String lastName = rs.getString("LastName");
                 String itemsSold = rs.getString("ItemsSold");
                 String itemsPurchased = rs.getString("ItemsPurchased");
-
+                
 
                 out.print("<td>" + customerID + "</td>");
                 out.print("<td>" + firstName + "</td>");
@@ -410,15 +408,40 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
+              out.print("<br>");  
+
+
+
+            //getRevenueByCustomer
+            stmt1=conn.createStatement();
+            rs = stmt1.executeQuery("call getRevenueByCustomer('" + get_id + "')");
+
+            out.print("<br>");
+            out.print("<label for=\"itemsSold-label\"> Revenue of Customer </label>");
+            out.print("<br>");
+
+            out.print("<form name=\"itemsSold-form\" id=\"signup-form\" method=\"post\" role=\"form\">");
+            out.println("<table class=\"table table-striped\" style=\"width:100%\">");
+            out.print("<tr>");
+
+            out.print("<th>Revenue</th>");
+            
+            out.print("</tr>");
+              while(rs.next()) {
+                out.print("<tr>");
+
+                String revenue = rs.getString("Revenue");
+               
+                out.print("<td>" + revenue + "</td>");
+
+                out.print("</tr>");
+              }
+              out.println("</table>");
+              out.print("</form>");
               out.print("<br>");
-
-
-
-
-
-
-
-              %>
+              out.print("<br>");  
+ 
+              %>        
 
       <form name="getBidHistory-form" method="post" action="getBidHistory.jsp">
         <div class ="form-group col-lg-6 form-large col-lg-offset-2">
@@ -473,18 +496,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+            
 <%
 
 
@@ -498,7 +510,6 @@
   <br>
 
 </div><!-- content container -->
-
     <footer class="footer">
       <div class="container">
         <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>
