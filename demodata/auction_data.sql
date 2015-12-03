@@ -115,7 +115,7 @@ call setAuctionImage(13,'santahat.jpg');
 call approveAuction(13);
 /*elf outfit*/
 call addAuction('phil', 14, 5, 30.0, 35.0, 1, 3);
-call setAuctionImage(14,'elfoutfit.jpg');
+call setAuctionImage(14,'elfcostume.jpg');
 call approveAuction(14);
 /*eyepatches*/
 call addAuction('bob', 15, 6, 2.0, 4.0, 1, 5);
@@ -199,5 +199,5 @@ call setAuctionImage(34,'pegleg.jpg');
 call approveAuction(34);
 /*hippo*/
 call addAuction('bob', 35, 5, 60000000.0, 65000000.0, 1, 5);
-call setAuctionImage(35,'nissansentra.jpg');
+call setAuctionImage(35,'hippo.jpg');
 call approveAuction(35);

@@ -7,13 +7,13 @@ call addItem(name, type, year, );
 *******************************************************************************/
 
 call addItem('Titanic', 'DVD', 2005, 3);
-call addItem('Nissan Sentra', 'Car', 2007, 1);
+call addItem('Nissan Sentra', 'car', 2007, 1);
 call addItem('Titanic', 'DVD', 2005, 1);
 
-call addItem('Headphones', 'Accessory', 2006, 200);
-call addItem('rainbow unicorn', 'Toy', 2012, 10);
-call addItem('Butterfly Buttercup', 'Toy', 2004, 3);
-call addItem('Watch', 'Accessory', 2009, 50);
+call addItem('Headphones', 'accessory', 2006, 200);
+call addItem('rainbow unicorn', 'toy', 2012, 10);
+call addItem('Butterfly Buttercup', 'toy', 2004, 3);
+call addItem('Watch', 'accessory', 2009, 50);
 call addItem('batmobile', 'car', 1983, 1);
 call addItem('Pikachu', 'other', 1994, 2);
 call addItem('garbage', 'other', 1980, 55);
@@ -29,10 +29,10 @@ call addItem('ruffled shirt','clothes', 1882, 1);
 call addItem('Tricorne','clothes', 1776, 1);
 call addItem('Straw Hat', 'clothes', 2010, 1);
 
-call addItem('Game Boy Advance','Toy', 2005, 2);
-call addItem('Goku action figure', 'Toy', 1995, 1);
-call addItem('bobble-head', 'Toy', 2000, 4);
-call addItem('One Piece Game', 'Toy', 2010, 1);
+call addItem('Game Boy Advance','toy', 2005, 2);
+call addItem('Goku action figure', 'toy', 1995, 1);
+call addItem('bobble-head', 'toy', 2000, 4);
+call addItem('One Piece Game', 'toy', 2010, 1);
 
 call addItem('IPad', 'electronics', 2012, 4);
 call addItem('Samsung Galaxy S4', 'electronics', 2014, 12);

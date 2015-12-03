@@ -42,11 +42,56 @@
       <div class="navbar-header">
         <a class="navbar-brand" href="index.html">databayse logo</a>
       <ul class="nav navbar-nav">
-      <li><a></a></li>
-        <li><a href="signup.html">sign up</a></li>
-        <li><a href="login.html">log in</a></li>
-        <li><a href="logout.jsp">log out</a></li>
-      </ul>
+      <li><a></a></li><!--HERE -->
+      <%
+      String mysURL = "jdbc:mysql://localhost/DATABAYSE";
+      String mysUserID = "root";
+      String mysPassword = "1";
+      String mysJDBCDriver = "com.mysql.jdbc.Driver";
+      String wierdmessage = "this is a wierdmessage";
+
+      String custID = "" + session.getValue("login");
+
+      java.sql.Connection conn=null;
+      try {
+            Class.forName(mysJDBCDriver).newInstance();
+            java.util.Properties sysprops=System.getProperties();
+            sysprops.put("user",mysUserID);
+            sysprops.put("password",mysPassword);
+
+            //connect to the database
+            conn=java.sql.DriverManager.getConnection(mysURL,sysprops);
+            System.out.println("Connected successfully to database using JConnect");
+            java.sql.Statement stmt=conn.createStatement();
+            java.sql.ResultSet rs = stmt.executeQuery("Select * from Customer where CustomerID ='"+ custID + "'");
+            if(rs.next()){ // in this case teh user is a logged in customer
+              out.print("<li><a href=\"customerHome.jsp\">My Account</a></li>");
+              out.print("<li><a href=\"logout.jsp\">log out</a></li>");
+            } else{
+              rs = stmt.executeQuery("Select * from Employee Where EmployeeID = '" + custID + "'");
+              if(rs.next()) {
+                if(rs.getString("isManager").contentEquals("1")) {
+                  out.print("<li><a href=\"managerHome.jsp\">Dashboard</a></li>");
+                }
+
+                else { // in this case the user is a logged in employee
+                  out.print("<li><a href=\"employeeHome.jsp\">Dashboard</a></li>");
+              }
+
+                out.print("<li><a href=\"logout.jsp\">log out</a></li>");
+              }
+              else { // and they havent logged in yet
+                out.print("<li><a href=\"signup.html\">sign up</a></li>");
+                out.print("<li><a href=\"login.html\">log in</a></li>");
+}
+}
+
+
+        //<li><a href="signup.html">sign up</a></li>
+        //<li><a href="login.html">log in</a></li>
+        //<li><a href="logout.jsp">log out</a></li>
+        %>
+      </ul><!--END HERE -->
 
       </div><!-- navbar-header -->
       <form name="search-form" id="search-form" action="itemsearch.jsp" method="post" role="form">
@@ -67,22 +112,7 @@
   <div class="content container"><!-- content container -->
 
     <%
-    String mysURL = "jdbc:mysql://localhost/DATABAYSE";
-    String mysUserID = "root";
-    String mysPassword = "1";
-    String mysJDBCDriver = "com.mysql.jdbc.Driver";
-    String wierdmessage = "this is a wierdmessage";
 
-    java.sql.Connection conn=null;
-    try {
-          Class.forName(mysJDBCDriver).newInstance();
-          java.util.Properties sysprops=System.getProperties();
-          sysprops.put("user",mysUserID);
-          sysprops.put("password",mysPassword);
-
-          //connect to the database
-          conn=java.sql.DriverManager.getConnection(mysURL,sysprops);
-          System.out.println("Connected successfully to database using JConnect");
 
             java.util.Enumeration en = request.getParameterNames();
             String auctID = new String();
@@ -94,7 +124,7 @@
 
               // get all the auction info
               java.sql.Statement stmt1=conn.createStatement();
-              java.sql.ResultSet rs = stmt1.executeQuery("Select * From Auction Where AuctionID = " + auctID + "");
+              java.sql.ResultSet res = stmt1.executeQuery("Select * From Auction Where AuctionID = " + auctID + "");
 
 
               String itemID = new String();
@@ -111,24 +141,24 @@
               String imagePath = new String();
 
 
-            if(rs.next()) {
-               itemID = rs.getString("ItemID");
-               sellerID = rs.getString("SellerID");
-               buyerID = rs.getString("BuyerID");
-               currentHighBid = rs.getString("CurrentHighBid");
-               openingDate = rs.getString("OpeningDate");
-               openingTime = rs.getString("OpeningTime");
-               closingDate = rs.getString("ClosingDate");
-               closingTime = rs.getString("ClosingTime");
-               imagePath = rs.getString("ImagePath");
+            if(res.next()) {
+               itemID = res.getString("ItemID");
+               sellerID = res.getString("SellerID");
+               buyerID = res.getString("BuyerID");
+               currentHighBid = res.getString("CurrentHighBid");
+               openingDate = res.getString("OpeningDate");
+               openingTime = res.getString("OpeningTime");
+               closingDate = res.getString("ClosingDate");
+               closingTime = res.getString("ClosingTime");
+               imagePath = res.getString("ImagePath");
 
-              rs = stmt1.executeQuery("Select * From Item where ItemID = " + itemID);
-                if(rs.next()) {
+              res = stmt1.executeQuery("Select * From Item where ItemID = " + itemID);
+                if(res.next()) {
 
 
-                  itemName = rs.getString("Name");
-                  itemType = rs.getString("Type");
-                  itemYear = rs.getString("Year");
+                  itemName = res.getString("Name");
+                  itemType = res.getString("Type");
+                  itemYear = res.getString("Year");
 
                   out.println("<h2>"+itemName+"</h2>");
                   out.println("<h5>"+itemType+ " Year: " + itemYear + "</h5>");
@@ -172,6 +202,21 @@
 }
 %>
 </div>
+</div>
+
+
+  <br>
+  <br>
+  <br>
+  <br>
+
+</div><!-- content container -->
+
+    <footer class="footer">
+      <div class="container">
+        <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>
+      </div>
+    </footer>
 <script src="js/jquery-2.1.4.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
 <script src="js/script.js"></script>

@@ -16,6 +16,11 @@
         document.getElementById("search-form").submit();
     }
   }
+
+  function submitAuction(){
+    console.log("im trying to submit!");
+    document.getElementById("random-auctions-form").submit();
+  }
   </script>
 </head>
 
@@ -64,25 +69,26 @@
 
 
                 java.sql.Statement stmt1=conn.createStatement();
+                // query the database for a customer, i guess for a personalized list of suggestions
       					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Customer Where CustomerID = '" + custID + "'");
-                if(rs.next()){
+                if(rs.next()){ // in this case teh user is a logged in customer
                   out.print("<li><a href=\"customerHome.jsp\">My Account</a></li>");
                   out.print("<li><a href=\"logout.jsp\">log out</a></li>");
                 }
-                else {
+                else { // in this case a user is a logged in manager
                   rs = stmt1.executeQuery("Select * from Employee Where EmployeeID = '" + custID + "'");
                   if(rs.next()) {
                     if(rs.getString("isManager").contentEquals("1")) {
                       out.print("<li><a href=\"managerHome.jsp\">Dashboard</a></li>");
                     }
 
-                    else {
+                    else { // in this case the user is a logged in employee
                       out.print("<li><a href=\"employeeHome.jsp\">Dashboard</a></li>");
                   }
 
                     out.print("<li><a href=\"logout.jsp\">log out</a></li>");
                   }
-                  else {
+                  else { // and they havent logged in yet
                     out.print("<li><a href=\"signup.html\">sign up</a></li>");
                     out.print("<li><a href=\"login.html\">log in</a></li>");
                   }
@@ -116,12 +122,12 @@
 <div class="row">
 <div class="container">
   <div class="btn-group btn-group-justified" role="group" aria-label="...">
-  <a href="button" class="btn btn-default">Car</a>
-  <a href="button" class="btn btn-default">Clothing</a>
-  <a href="button" class="btn btn-default">Toys</a>
-  <a href="button" class="btn btn-default">Electronics</a>
-  <a href="button" class="btn btn-default">Grocery</a>
-  <a href="button" class="btn btn-default">Other</a>
+  <a href="itemTypeSearch.jsp?search-input=car" class="btn btn-default">Car</a>
+  <a href="itemTypeSearch.jsp?search-input=clothes" class="btn btn-default">Clothing</a>
+  <a href="itemTypeSearch.jsp?search-input=toy" class="btn btn-default">Toys</a>
+  <a href="itemTypeSearch.jsp?search-input=electronics" class="btn btn-default">Electronics</a>
+  <a href="itemTypeSearch.jsp?search-input=grocery" class="btn btn-default">Grocery</a>
+  <a href="itemTypeSearch.jsp?search-input=other" class="btn btn-default">Other</a>
 </div> <!-- button div -->
 </div> <!-- container div -->
 </div> <!-- row div -->
@@ -196,7 +202,9 @@
 
   <%
    stmt1=conn.createStatement();
+   // this is what i need to apy attention to-- selecting all from the bestesellers list
    rs = stmt1.executeQuery("Select * From bestSellersList");
+   String aID = new String();
 
    int count = 0;
    String imagePath = new String();
@@ -210,25 +218,52 @@
     while(i < 4) {
       if(rs.next()) {
            imagePath =  rs.getString("ImagePath");
+           aID = rs.getString("AuctionID"); // okay change bestsellerslist to return the auctionID as well
+           out.print("<a href=\"auction.jsp?" + aID +"=submit\">");
+           //out.println("<h1>"+aID +"<h2>");
            out.println("<img src=\"images/"+imagePath+"\" alt=\"images/default.jpg class=\"img-responsive\" height=\"250\" >");
+           out.print("</a>");
       }
       i++;
     }
 
-  %>
 
-<!---
-
-  <a href="itemAuction.html"> <img src="images/pikachu.png" alt="Exotic Pets Photo" height="250" width="250"> </a>
-
-  <img src="images/bulbasaur.png" alt="Exotic Pets Photo" height="250" width="250">
-
-<img src="images/charmander.png" alt="Exotic Pets Photo" height="250" width="250">
-
-<img src="images/squirtle.png" alt="Exotic Pets Photo" height="250" width="250">
--->
-  </div><!-- images -->
+  %></div><!-- end of the images for best sellers-->
+  <div class = "row">
 </center>
+<div class ="container">
+  <div class="row"><!--i dont know how to left justify this with a proper offset-->
+    <section class="col-lg-12">
+      <h2>Current Open Auctions</h2>
+    </section>
+  </div>
+</div>
+  <center>
+  <div class = "item col-lg-offset-0"> <!--add in images for current open auctions -->
+  <%
+  // grab a bunch of things from open auctions
+  stmt1 = conn.createStatement();
+  rs = stmt1.executeQuery("select * from Auction order by Rand()");
+  i = 0; // let there be a max of four images from open auctions
+  aID = new String();
+  imagePath = new String();
+  //out.print("<form name=\"random-auctions-form\" id=\"random-auctions-form\" action=\"auction.jsp\" method=\"get\" role=\"form\">");
+  while(i < 3){
+    // print out the images
+    if(rs.next()){
+      aID = rs.getString("AuctionID");
+      imagePath = rs.getString("ImagePath");
+      out.print("<a href=\"auction.jsp?" + aID +"=submit\">");
+      out.print("<img src=\"images/"+imagePath+"\" alt=\""+imagePath+" class=\"img-responsive\" height=\"250\" >");
+      out.print("</a>");
+    }
+  i++;
+}
+  i=0;
+
+%></div><!-- images -->
+</center>
+</div>
 
 
   <br>
