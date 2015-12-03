@@ -135,7 +135,7 @@
 
                     out.println("<form name=\"placebid-form\" id=\"placebid-form\" action=\"placeBid.jsp\" method=\"post\" role=\"form\">");
 
-                    out.println("<img src=\"images/"+imagePath+"\" alt=\"default.jpg\" height=\"400\">");
+                    out.println("<img src=\"images/"+imagePath+"\" alt=\"images/default.jpg\" height=\"400\">");
                       out.println("<br>");
                         out.println("<br>");
                           out.println("<br>");

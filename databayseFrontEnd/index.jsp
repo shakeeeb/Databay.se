@@ -41,7 +41,7 @@
 
 
             <div class="navbar-header">
-              <a class="navbar-brand" href="index.jsp">databayse logo</a>
+              <a class="pull-left" href="index.jsp"><img src="images/logo.png" height="50px" width="50px"></a>
 
 
 
