@@ -493,6 +493,8 @@
         }
 %>
 
+<a href="employeeSettings.jsp" class="btn btn-default">Edit Account Info </a>
+
   <br>
   <br>
   <br>

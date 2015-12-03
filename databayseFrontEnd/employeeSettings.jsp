@@ -16,7 +16,7 @@
         document.getElementById("search-form").submit();
     }
 
-]
+
   }
 
   function UpdateAccountButton_onclick() {
@@ -80,7 +80,7 @@
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
 
-    String custID = "" + session.getValue("login");
+    String empID = "" + session.getValue("login");
   	java.sql.Connection conn=null;
 			try
 			{
@@ -95,8 +95,9 @@
 
           // customer info
           java.sql.Statement stmt1=conn.createStatement();
-					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Customer Where CustomerID = '" + custID + "'");
+					java.sql.ResultSet rs = stmt1.executeQuery("Select * From Employee Where EmployeeID = '" + empID + "'");
 
+          String ssn = new String();
           String firstName = new String();
           String lastName = new String();
           String address = new String();
@@ -104,11 +105,11 @@
           String state = new String();
           String zip = new String();
           String tel = new String();
-          String email = new String();
+          String hrwage = new String();
           String password = new String();
-          String ccard = new String();
 
             if(rs.next()) {
+              ssn = rs.getString("SSN");
               firstName = rs.getString("FirstName");
               lastName = rs.getString("LastName");
               address = rs.getString("Address");
@@ -116,9 +117,8 @@
               state = rs.getString("State");
               zip = rs.getString("Zipcode");
               tel = rs.getString("Telephone");
-              email = rs.getString("Email");
+              hrwage = rs.getString("HourlyRate");
               password = rs.getString("Password");
-              ccard = rs.getString("CreditCard");
             }
             %>
 
@@ -128,7 +128,14 @@
               </section>
             </div>
 
-          <form name="edit-account-form" id="edit-account-form" action="editCustomer.jsp" method="post" role="form">
+          <form name="edit-account-form" id="edit-account-form" action="editEmployee.jsp" method="post" role="form">
+
+             <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="ssn-label">SSN</label>
+              <%
+              out.println("<input name=\"ssn-input\" id=\"ssn-input\" type=\"text\" class=\"form-control col-lg-offset-1\" readonly value=\""+ ssn +"\">");
+              %>
+            </div>
 
             <div class ="form-group col-lg-6 form-large col-lg-offset-2">
               <label for="first-name-label">First Name</label>
@@ -143,13 +150,6 @@
               out.println("<input name=\"last-name-input\" id=\"last-name-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ lastName +"\">");
               %>
 
-            </div>
-
-            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-              <label for="email-label">Email</label>
-              <%
-              out.println("<input name=\"email-input\" id=\"email-input\" type=\"email\" class=\"form-control col-lg-offset-1\" value=\""+ email +"\">");
-              %>
             </div>
 
             <div class ="form-group col-lg-6 form-large col-lg-offset-2">
@@ -181,68 +181,17 @@
                 %>
             </div>
 
-  <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
+              <label for="hrwage-label">Hourly Wage</label>
+                <%
+                out.println("<input name=\"hrwage-input\" id=\"hrwage-input\" type=\"text\" class=\"form-control col-lg-offset-1\" readonly value=\""+ hrwage +"\">");
+                %>
+            </div>
+
+              <div class ="form-group col-lg-6 form-large col-lg-offset-2">
     <label for="state-label">State</label>
     
- <div class="dropdown">
-  <button class="btn btn-default btn-dropdown dropdown-toggle col-lg-6" type="button" id="dropdownMenu1" data-toggle="dropdown">
-    State
-    <span class="caret"></span>
-  </button>
-  <ul class="dropdown-menu col-lg-6">
-    <li><a href="#">AL</a></li>
-    <li><a href="#">AK</a></li>
-    <li><a href="#">AR</a></li>
-    <li><a href="#">AZ</a></li>
-    <li><a href="#">CA</a></li>
-    <li><a href="#">CO</a></li>
-    <li><a href="#">CT</a></li>
-    <li><a href="#">DC</a></li>
-    <li><a href="#">DE</a></li>
-    <li><a href="#">FL</a></li>
-    <li><a href="#">HI</a></li>
-    <li><a href="#">ID</a></li>
-    <li><a href="#">IL</a></li>
-    <li><a href="#">IN</a></li>
-    <li><a href="#">IA</a></li>
-    <li><a href="#">KS</a></li>
-    <li><a href="#">KY</a></li>
-    <li><a href="#">LA</a></li>
-    <li><a href="#">ME</a></li>
-    <li><a href="#">MA</a></li>
-    <li><a href="#">MD</a></li>
-    <li><a href="#">MI</a></li>
-    <li><a href="#">MN</a></li>
-    <li><a href="#">MS</a></li>
-    <li><a href="#">MO</a></li>
-    <li><a href="#">MT</a></li>
-    <li><a href="#">NE</a></li>
-    <li><a href="#">NV</a></li>
-    <li><a href="#">NH</a></li>
-    <li><a href="#">NJ</a></li>
-    <li><a href="#">NM</a></li>
-    <li><a href="#">NY</a></li>
-    <li><a href="#">NC</a></li>
-    <li><a href="#">ND</a></li>
-    <li><a href="#">OH</a></li>
-    <li><a href="#">OK</a></li>
-    <li><a href="#">OR</a></li>
-    <li><a href="#">PA</a></li>
-    <li><a href="#">RI</a></li>
-    <li><a href="#">SC</a></li>
-    <li><a href="#">SD</a></li>
-    <li><a href="#">TN</a></li>
-    <li><a href="#">TX</a></li>
-    <li><a href="#">UT</a></li>
-    <li><a href="#">VT</a></li>
-    <li><a href="#">VA</a></li>
-    <li><a href="#">WA</a></li>
-    <li><a href="#">WV</a></li>
-    <li><a href="#">WI</a></li>
-    <li><a href="#">WY</a></li>
-
-  </ul>
-</div>
+<input name="state-input" id="state-input" type="text" class="form-control col-lg-offset-1" placeholder="State">
 
 
 
@@ -252,13 +201,6 @@
               <label for="zip-label">Zip Code</label>
               <%
               out.println("<input name=\"zip-input\" id=\"zip-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ zip +"\">");
-              %>
-            </div>
-
-            <div class ="form-group col-lg-6 form-large col-lg-offset-2">
-              <label for="ccard-label">Credit Card</label>
-              <%
-              out.println("<input name=\"ccard-input\" id=\"ccard-input\" type=\"text\" class=\"form-control col-lg-offset-1\" value=\""+ ccard +"\">");
               %>
             </div>
 
@@ -276,3 +218,17 @@
           out.println("Error: " + e);
         }
 %>
+
+</div><!-- content container -->
+
+    <footer class="footer">
+      <div class="container">
+        <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>
+      </div>
+    </footer>
+
+<script src="js/jquery-2.1.4.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+<script src="js/script.js"></script>
+</body>
+</html>

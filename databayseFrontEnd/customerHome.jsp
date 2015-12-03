@@ -217,33 +217,16 @@
   <br>
   <br>
   <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
 
 
 
 </div><!-- content container -->
 
+    <footer class="footer">
+      <div class="container">
+        <center><span class="text-muted"><br>FOOTER HERE.<br><br><br></span></center>
+      </div>
+    </footer>
 
 <script src="js/jquery-2.1.4.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
