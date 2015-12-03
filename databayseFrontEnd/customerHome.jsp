@@ -179,20 +179,22 @@
             stmt1=conn.createStatement();
             rs = stmt1.executeQuery("call getUpcomingAuctions('" + custID + "')");
 
-            boolean hasUnnapprovedAuctions = false;
+            int unnapprovedAuctions = 0;
             while(rs.next()){
                 String itemID = rs.getString("ItemID");
                 String isComplete = rs.getString("isComplete");
-                out.print("Item: " + itemID);
-                out.print("Active: " + isComplete);
-                out.print("<br>");
-                hasUnnapprovedAuctions = true;
+                //out.print("Item: " + itemID);
+                //out.print("Active: " + isComplete);
+                //out.print("<br>");
+                unnapprovedAuctions++;
               }
 
-              if(hasUnnapprovedAuctions == false) {
+              if(unnapprovedAuctions == 0) {
                 // Unnaproved Auctions
                 out.print("<label for=\"approved-auctions-label\">No Auctions!</label>");
                 out.print("<br>");
+              } else {
+                out.print("<label> You have " +unnapprovedAuctions+" auctions are being approved</label>");
               }
 
             // get open Auctions
