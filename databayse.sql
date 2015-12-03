@@ -148,7 +148,7 @@ CREATE PROCEDURE getMonthlySalesReport(IN Month INTEGER)
 BEGIN
   SELECT I.Name, SUM(A.ClosingBid)
   FROM Item I, Auction A
-  WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID
+  WHERE MONTH(A.ClosingDate) = Month AND I.ItemID = A.ItemID AND A.isComplete = 1 AND A.CurrentHighBid > 0
   GROUP BY I.Name, I.Type;
 End $$
 
@@ -310,9 +310,9 @@ End $$
 # 3.2.d + 3.3.g Produce a list of item suggestions for a given customer (based on that customer's past purchases)
 CREATE PROCEDURE getSuggestionsByType(IN customerID CHAR(32))
 BEGIN
-SELECT I.*
-FROM getTypesForSuggestion S, Item I
-WHERE S.Type = I.Type AND S.CustomerID = customerID;
+SELECT I.*, A.*
+FROM getTypesForSuggestion S, Item I, Auction A
+WHERE S.Type = I.Type AND S.CustomerID = customerID AND I.ItemID = A.ItemID AND A.isComplete = 0;
 End
 $$
 
@@ -379,7 +379,7 @@ END $$
 CREATE PROCEDURE itemsAvailableByType(IN itemType CHAR(32))
 BEGIN
   SELECT I.Name, A.CurrentHighBid, A.AuctionID, A.SellerID, A.OpeningDate, A.OpeningTime,
-  A.ClosingDate, A.ClosingTime
+  A.ClosingDate, A.ClosingTime, A.imagePath
   FROM  Auction A, Item I
   Where I.Type = itemType AND A.ItemID = I.ItemID AND A.isComplete = 0
   GROUP BY A.AuctionID;
@@ -562,8 +562,8 @@ CREATE VIEW DATABAYSE.itemsSold(ItemID, Name, Type, Year, CopiesSold) AS
   GROUP BY I.Name, I.Type;
 
 /*3.1.h + 3.3.f Produce a best seller list of items*/
-CREATE VIEW DATABAYSE.bestSellersList(ItemID, Name, Type, Year, CopiesSold, ImagePath) AS
-  SELECT itemsSold.ItemID, itemsSold.Name, itemsSold.Type, itemsSold.Year, itemsSold.CopiesSold, A.ImagePath
+CREATE VIEW DATABAYSE.bestSellersList(ItemID, Name, Type, Year, CopiesSold, ImagePath, AuctionID) AS
+  SELECT itemsSold.ItemID, itemsSold.Name, itemsSold.Type, itemsSold.Year, itemsSold.CopiesSold, A.ImagePath, A.AuctionID
   FROM itemsSold , Auction A
   WHERE itemsSold.ItemID = A.ItemID AND A.isComplete = 1
   ORDER BY CopiesSold DESC LIMIT 10; # DESC: descending order

@@ -15,4 +15,3 @@ call endAuction(2);
 /*sell two items*/
 /*CREATE PROCEDURE addBid(IN auctID INTEGER, IN custID CHAR(32),
 IN newBid DECIMAL(8,2), IN newMaxBid DECIMAL(8,2))*/
-call addBid(3, 'bob', );

@@ -17,6 +17,10 @@
         document.getElementById("search-form").submit();
     }
   }
+
+  function PlaceBidButton_onclick() {
+    document.getElementById("placebid-form").submit();
+  }
   </script>
 </head>
 
@@ -39,20 +43,16 @@
         <a class="navbar-brand" href="index.html">databayse logo</a>
       <ul class="nav navbar-nav">
       <li><a></a></li>
-        <li><a href="signup.html">sign up</a></li>
-        <li><a href="login.html">log in</a></li>
-        <li><a href="logout.jsp">log out</a></li>
+
       </ul>
 
       </div><!-- navbar-header -->
-
       <form name="search-form" id="search-form" action="itemsearch.jsp" method="post" role="form">
         <div class="container navtop-margin">
 
         <div class="col-lg-offset-6 input-group col-lg-6">
           <input name="search-input" id="search-input" type="text" class="form-control col-lg-10" placeholder="I want to bid on...">
-          <!-- <span class="btn btn-default input-group-addon" id="basic-addon2">Search!</span> -->
-          <input id="SearchButton" class="btn btn-default" type="button" value="Search"  onclick="return SearchButton_onclick()">
+          <span id="SearchButton" class="input-group-addon" type="button" value="Search"  onclick="return SearchButton_onclick()">Search!</span>
         </div>
 
         </div>
@@ -69,8 +69,8 @@
     String mysUserID = "root";
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
-    String wierdmessage = "this is a wierdmessage";
 
+    String custID = "" + session.getValue("login");
     java.sql.Connection conn=null;
     try {
           Class.forName(mysJDBCDriver).newInstance();
@@ -96,6 +96,9 @@
 
 
               String itemID = new String();
+              String itemName = new String();
+              String itemType = new String();
+              String itemYear = new String();
               String sellerID = new String();
               String buyerID = new String();
               String currentHighBid = new String();
@@ -117,6 +120,61 @@
                closingTime = rs.getString("ClosingTime");
                imagePath = rs.getString("ImagePath");
 
+              rs = stmt1.executeQuery("Select * From Item where ItemID = " + itemID);
+                if(rs.next()) {
+                  itemName = rs.getString("Name");
+                  itemType = rs.getString("Type");
+                  itemYear = rs.getString("Year");
+
+                  out.println("<h2>"+itemName+"</h2>");
+                  out.println("<h5>"+itemType+ " Year: " + itemYear + "</h5>");
+                  out.println("<br>");
+
+
+                }
+
+                    out.println("<form name=\"placebid-form\" id=\"placebid-form\" action=\"placeBid.jsp\" method=\"post\" role=\"form\">");
+
+                    out.println("<img src=\"images/"+imagePath+"\" alt=\"default.jpg\" height=\"400\">");
+                      out.println("<br>");
+                        out.println("<br>");
+                          out.println("<br>");
+
+                    out.println("<label for=\"seller-id-label\">Seller: "+sellerID+"</label>");
+                    out.println("<br>");
+
+                    if(currentHighBid.contentEquals("-1.00")){
+                    out.println("<label for=\"auction-bid-label\">No Bid Yet!</label>");
+                    out.println("<br>");
+                  }else {
+                    if(custID != null &&  buyerID != null && custID.contentEquals(buyerID)){
+
+                        out.println("<label for=\"auction-bid-label\">You are currently winning!</label>");
+                              out.println("<br>");
+                    }
+                    out.println("<label for=\"auction-bid-label\">Winning Bid: "+currentHighBid+"</label>");
+                    out.println("<br>");
+                  }
+
+
+
+                    out.println("<div class =\"form-group col-lg-2 form-large col-lg-offset-0\">");
+                    out.println("<label for=\"bid-label\">Place Bid: </label>");
+                    out.println("<input name=\"bid-input\" id=\"bid-input\" type=\"text\" class=\"form-control col-lg-offset-1\" placeholder=\"bid\">");
+                    out.println("</div>");
+
+                    out.println("<br>");
+                        out.println("<br>");
+
+
+                    out.println("<div class=\"form-group col-lg-0 form-large col-lg-offset-0\">");
+                    out.println("<input id=\"PlaceBidButton\" type=\"submit\" class=\"btn btn-primary\" value=\"Place Bid\" onclick=\"return PlaceBidButton_onclick()\" >");
+
+                    out.println("</div>");
+
+                      out.println("<input hidden name=\""+auctID+"\">");
+
+          out.println("</form>");
 
 
             }

@@ -41,7 +41,7 @@ String auctionLength = request.getParameter("auct-length-input");
                 String param = (String)en.nextElement();
                 out.println(param);
                 out.println(request.getParameter(param));
-              
+
                   // params.add(param);
                 }
 
@@ -84,6 +84,8 @@ String auctionLength = request.getParameter("auct-length-input");
 
           // load page saying auction is being approved
           out.println("Auction submitted for approval.");
+          response.sendRedirect("auctionSubmitted.html");
+
 
 
         } catch(Exception e) {
