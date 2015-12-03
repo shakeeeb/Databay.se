@@ -171,7 +171,7 @@ End $$
 # 3.1.e Selects the revenue from a particular type of customer
 CREATE PROCEDURE getRevenueByCustomer(IN customerName Char(32))
 BEGIN
-  SELECT SUM(A.ClosingBid) AS Revenue
+  SELECT SUM(A.ClosingBid)
   FROM Auction A, Customer C
   WHERE C.CustomerID = customerName AND C.CustomerID = A.SellerID AND A.isComplete = 1;
 End $$

@@ -29,11 +29,13 @@
     }
   }
 
-    function getRevenueByCustomerButton_onclick() {
+  function getRevenueByCustomerButton_onclick() {
     if(document.getElementById("getRevenueByCustomer-input").value != "") {
         document.getElementById("getRevenueByCustomer-form").submit();
     }
   }
+
+
 
   </script>
 </head>
@@ -86,6 +88,7 @@
     String mysUserID = "root";
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
+    String get_id = request.getParameter("getBidHistory-input");
 
     String emplID = "" + session.getValue("login");
   	java.sql.Connection conn=null;
@@ -120,7 +123,7 @@
             out.print("<label for=\"unnaproved-auctions-label\">Unnaproved Auctions</label>");
             out.print("<br>");
 
-            out.print("<form name=\"approve-auction-form\" id=\"signup-form\" method=\"post\" role=\"form\">");
+            out.print("<form name=\"approve-auction-form\" id=\"signup-form\" action=\"approveAuction.jsp\" method=\"post\" role=\"form\">");
             out.println("<table class=\"table table-striped\" style=\"width:100%\">");
             out.print("<tr>");
             out.print("<th>Approve</th>");
@@ -203,7 +206,7 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-          out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
               
 
@@ -244,7 +247,7 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-              out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
               out.print("<br>");              
 
@@ -277,7 +280,7 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-              out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
               out.print("<br>");              
 
@@ -321,12 +324,11 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-              out.println("</form>");
+              out.print("</form>");
               out.print("<br>");
-              out.print("<br>");  
+              out.print("<br>");              
 
-              //getBestBuyer
-              
+  //getBestBuyer
             stmt1=conn.createStatement();
             rs = stmt1.executeQuery("call getBestBuyer()");
 
@@ -412,29 +414,75 @@
               out.print("<br>");
               out.print("<br>");  
 
+            //getBidHistory
+            stmt1=conn.createStatement();
+            rs = stmt1.executeQuery("call getBidHistory('" + get_id + "')");
+
+            out.print("<br>");
+            out.print("<label for=\"itemsSold-label\"> Bid History of Auction </label>");
+            out.print("<br>");
+
+            out.print("<form name=\"itemsSold-form\" id=\"signup-form\" action=\"approveAuction.jsp\" method=\"post\" role=\"form\">");
+            out.println("<table class=\"table table-striped\" style=\"width:100%\">");
+            out.print("<tr>");
+
+            out.print("<th>Bid</th>");
+            out.print("<th>MaxBid</th>");
+            out.print("<th>CustomerID</th>");
+            out.print("<th>BidDate</th>");
+            out.print("<th>BidTime</th>");
+            
+            out.print("</tr>");
+              while(rs.next()) {
+                out.print("<tr>");
+
+                String bid = rs.getString("Bid");
+                String maxBid = rs.getString("MaxBid");
+                String customerID = rs.getString("CustomerID");
+                String bidDate = rs.getString("BidDate");
+                String bidTime = rs.getString("BidTime");
+                
+
+                out.print("<td>" + bid + "</td>");
+                out.print("<td>" + maxBid + "</td>");
+                out.print("<td>" + customerID + "</td>");
+                out.print("<td>" + bidDate + "</td>");
+                out.print("<td>" + bidTime + "</td>");
+
+                out.print("</tr>");
+              }
+              out.println("</table>");
+              out.print("</form>");
+              out.print("<br>");
+              out.print("<br>"); 
 
 
 
 
 
 
-              %>        
 
-      <form name="getBidHistory-form" method="post" action="getBidHistory.jsp">
+
+              %>
+
+
+
+
+
+        <form name="getBidHistory-form" method="post" action="getBidHistory.jsp">
         <div class ="form-group col-lg-6 form-large col-lg-offset-2">
           <label for="getBidHistory-label">Get Bid History of Auction</label>
           <input name="getBidHistory-input" id="getBidHistory-input" type="text" class="form-control col-lg-offset-1" placeholder="ID of Auction to get history">
         </div>
 
         <div class="form-group col-lg-1 form-large col-lg-offset-7">
-            <input id="getBidHistoryButton" type="button" class="btn btn-primary" value="GetHistory" onclick="return getHistoryButton_onclick()" >
+            <input id="getBidHistoryButton" type="button" class="btn btn-primary" value="Get History" onclick="return getHistoryButton_onclick()" >
         </div>
         </form>
         <br>
         <br>
         <br>
-
-
+        
         <form name="getRevenueByItem-form" method="post" action="getRevenueByItem.jsp">
         <div class ="form-group col-lg-6 form-large col-lg-offset-2">
           <label for="getRevenueByItem-label">Get Revenue by Item</label>
@@ -442,7 +490,7 @@
         </div>
 
         <div class="form-group col-lg-1 form-large col-lg-offset-7">
-          <input id="getRevenueByItemButton" type="button" class="btn btn-primary" value="GetRevenueByItem" onclick="return getRevenueByItemButton_onclick()" >
+            <input id="getRevenueByItemButton" type="button" class="btn btn-primary" value="GetRevenueByItem" onclick="return getRevenueByItemButton_onclick()" >
         </div>
         </form>
         <br>
@@ -471,22 +519,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-            
 <%
-
 
         } catch(Exception e) {
           out.println("Error: " + e);

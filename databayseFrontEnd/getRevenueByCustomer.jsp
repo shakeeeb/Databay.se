@@ -86,6 +86,7 @@
     String mysUserID = "root";
     String mysPassword = "1";
     String mysJDBCDriver = "com.mysql.jdbc.Driver";
+    String get_id = request.getParameter("getRevenueByCustomer-input");
 
     String emplID = "" + session.getValue("login");
   	java.sql.Connection conn=null;
@@ -193,8 +194,6 @@
                 String copiesSold = rs.getString("CopiesSold");
                 String amountInStock = rs.getString("AmountInStock");
 
-
-                
                 out.print("<td>" + itemName + "</td>");
                 out.print("<td>" + itemType + "</td>");
                 out.print("<td>" + itemYear + "</td>");
@@ -203,10 +202,9 @@
                 out.print("</tr>");
               }
               out.println("</table>");
-          out.println("</form>");
+              out.println("</form>");
               out.print("<br>");
               
-
 
               //customer mailing list
             stmt1=conn.createStatement();
@@ -323,10 +321,10 @@
               out.println("</table>");
               out.println("</form>");
               out.print("<br>");
-              out.print("<br>");  
+              out.print("<br>");     
 
-              //getBestBuyer
-              
+
+  //getBestBuyer
             stmt1=conn.createStatement();
             rs = stmt1.executeQuery("call getBestBuyer()");
 
@@ -414,10 +412,35 @@
 
 
 
+            //getRevenueByCustomer
+            stmt1=conn.createStatement();
+            rs = stmt1.executeQuery("call getRevenueByCustomer('" + get_id + "')");
 
+            out.print("<br>");
+            out.print("<label for=\"itemsSold-label\"> Revenue of Customer </label>");
+            out.print("<br>");
 
+            out.print("<form name=\"itemsSold-form\" id=\"signup-form\" method=\"post\" role=\"form\">");
+            out.println("<table class=\"table table-striped\" style=\"width:100%\">");
+            out.print("<tr>");
 
+            out.print("<th>Revenue</th>");
+            
+            out.print("</tr>");
+              while(rs.next()) {
+                out.print("<tr>");
 
+                String revenue = rs.getString("Revenue");
+               
+                out.print("<td>" + revenue + "</td>");
+
+                out.print("</tr>");
+              }
+              out.println("</table>");
+              out.print("</form>");
+              out.print("<br>");
+              out.print("<br>");  
+ 
               %>        
 
       <form name="getBidHistory-form" method="post" action="getBidHistory.jsp">
@@ -462,17 +485,6 @@
         <br>
         <br>
         <br>
-
-
-
-
-
-
-
-
-
-
-
 
 
 
