@@ -141,7 +141,14 @@
                           out.println("<br>");
 
                     out.println("<label for=\"seller-id-label\">Seller: "+sellerID+"</label>");
-                    out.println("<br>");
+
+                  rs = stmt1.executeQuery("Select * From Customer where CustomerID = '" + sellerID + "'");
+                  if(rs.next()) {
+                  String sellerRating = rs.getString("Rating");
+                  out.println("rating: " + sellerRating + "\5");
+                  out.println("<br>");
+                  }
+
 
                     if(currentHighBid.contentEquals("-1.00")){
                     out.println("<label for=\"auction-bid-label\">No Bid Yet!</label>");
@@ -159,7 +166,7 @@
                   rs = stmt1.executeQuery("Select * From Auction where AuctionID = " + auctID);
                   if(rs.next()) {
                     String isComplete = rs.getString("isComplete");
-        
+
 
                   if(isComplete.contentEquals("0")){
                     out.println("<div class =\"form-group col-lg-2 form-large col-lg-offset-0\">");
@@ -178,6 +185,36 @@
                   }
                   else {
                     out.println("Auction Complete");
+                    out.println("<br>");
+                      out.println("<br>");
+                        out.println("<br>");
+                out.println("<label for=\"bid-history-label\">Bid History </label>");
+                  rs = stmt1.executeQuery("call getBidHistory("+auctID+")");
+                  out.println("<table class=\"table table-striped\"style=\"width:100%\">");
+                  out.print("<tr>");
+                  out.print("<th>Bid</th>");
+                  out.print("<th>Bidder</th>");
+                  out.print("<th>Bid Date</th>");
+                  out.print("<th>Bid Time</th>");
+                  out.print("</tr>");
+                  while(rs.next()){
+                    String bid = rs.getString("Bid");
+                    String bidder = rs.getString("CustomerID");
+                    String bidDate = rs.getString("BidDate");
+                    String bidTime = rs.getString("BidTime");
+
+                    out.print("</tr>");
+                    out.print("<td>" + bid + "</td>");
+                    out.print("<td>" +  bidder + "</td>");
+                   out.print("<td>" + bidDate + "</td>");
+                   out.print("<td>" + bidTime + "</td>");
+                    out.print("</tr>");
+
+
+
+                  }
+                  out.print("</table>");
+
                   }
                 }
                       out.println("<input hidden name=\""+auctID+"\">");

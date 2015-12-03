@@ -1,18 +1,17 @@
 .navbar-default {
   border: none;
-  background-color: #1abddf;
+  background-color: #BD1E23;
   opacity: .96;
 }
 
 .navtop-margin {
-  padding-top: .5em;
+	padding-top: .5em;
 }
 
 .footer {
   border: none;
-  background-color: #1abddf;
+  background-color: #BD1E23;
   opacity: .96;
-  color:#fffaf0;
 }
 
 .form-large{
@@ -22,17 +21,17 @@
 
 
 .body{
-  background-color: #fffefc;
+  background-color: #ffffff;
 }
 
 .btn-default{
-  color: #1abddf;
-  background-color: #f0efee;
+	color: #670a0a;
+	background-color: #f0efee;
   
 }
 
 .navbar-default .navbar-nav>li>a{
-  color:#fffaf0;
+	color:#fffaf0;
 }
 
 .btn-dropdown {
