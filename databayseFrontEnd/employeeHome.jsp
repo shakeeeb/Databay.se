@@ -458,29 +458,36 @@
         <div class="form-group col-lg-1 form-large col-lg-offset-7">
             <input id="getRevenueByCustomerButton" type="button" class="btn btn-primary" value="GetRevenueByCustomer" onclick="return getRevenueByCustomerButton_onclick()" >
         </div>
+
+
+
+
+<br>
+<br>
+<br>
+
+<div class = "col-lg-2 lg-offset-7">
+<br>
+<br>
+<br>
+<a href="employeeSettings.jsp" class="btn btn-default">Edit Account Info </a>
+</div>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+
+
+
+
         </form>
         <br>
         <br>
         <br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        <br>
 
 
 
@@ -493,13 +500,13 @@
         }
 %>
 
-<a href="employeeSettings.jsp" class="btn btn-default">Edit Account Info </a>
-
-  <br>
-  <br>
-  <br>
+<br>
+<br>
 
 </div><!-- content container -->
+<br>
+<br>
+<br>
 
     <footer class="footer">
       <div class="container">
