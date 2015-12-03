@@ -512,11 +512,20 @@
         <br>
 
 
+        <div class = "col-lg-2 lg-offset-4">
+        <br>
+        <br>
+        <br>
+        <a href="employeeSettings.jsp" class="btn btn-default">Edit Account Info </a>
+
+        <br>
+        <br>
+        </div>
 
 
 
-
-
+<br>
+<br>
 
 
 <%
@@ -526,6 +535,8 @@
         }
 %>
 
+  <br>
+  <br>
   <br>
   <br>
   <br>

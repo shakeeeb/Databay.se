@@ -340,10 +340,10 @@
             out.print("<tr>");
 
             out.print("<th>CustomerID</th>");
-            out.print("<th>Name</th>");
-            out.print("<th>Type</th>");
-            out.print("<th>Year</th>");
-            out.print("<th>CopiesSold</th>");
+            out.print("<th>First Name</th>");
+            out.print("<th>Last Name</th>");
+            out.print("<th>Items Sold</th>");
+            out.print("<th>Items Purchased</th>");
 
             out.print("</tr>");
               while(rs.next()) {
@@ -382,11 +382,11 @@
             out.println("<table class=\"table table-striped\" style=\"width:100%\">");
             out.print("<tr>");
 
-            out.print("<th>CustomerID</th>");
-            out.print("<th>Name</th>");
-            out.print("<th>Type</th>");
-            out.print("<th>Year</th>");
-            out.print("<th>CopiesSold</th>");
+              out.print("<th>CustomerID</th>");
+              out.print("<th>First Name</th>");
+              out.print("<th>Last Name</th>");
+              out.print("<th>Items Sold</th>");
+              out.print("<th>Items Purchased</th>");
 
             out.print("</tr>");
               while(rs.next()) {
@@ -458,29 +458,36 @@
         <div class="form-group col-lg-1 form-large col-lg-offset-7">
             <input id="getRevenueByCustomerButton" type="button" class="btn btn-primary" value="GetRevenueByCustomer" onclick="return getRevenueByCustomerButton_onclick()" >
         </div>
+
+
+
+
+<br>
+<br>
+<br>
+
+<div class = "col-lg-2 lg-offset-7">
+<br>
+<br>
+<br>
+<a href="employeeSettings.jsp" class="btn btn-default">Edit Account Info </a>
+</div>
+
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
+
+
+
+
+
         </form>
         <br>
         <br>
         <br>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        <br>
 
 
 
@@ -493,13 +500,13 @@
         }
 %>
 
-<a href="employeeSettings.jsp" class="btn btn-default">Edit Account Info </a>
-
-  <br>
-  <br>
-  <br>
+<br>
+<br>
 
 </div><!-- content container -->
+<br>
+<br>
+<br>
 
     <footer class="footer">
       <div class="container">
